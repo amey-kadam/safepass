@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Guardian - Your Emergency Safety Net</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 scroll-smooth">
+    <!-- Navbar -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+                    <span class="font-bold text-xl text-gray-800">QR Guardian</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-blue-600">Features</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-blue-600">How It Works</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-blue-600">Testimonials</a>
+                    <a href="{{ url_for('auth') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg min-h-screen flex items-center pt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="text-white space-y-8">
+                    <h1 class="text-4xl md:text-6xl font-bold leading-tight">
+                        Your Safety Companion in Every Emergency
+                    </h1>
+                    <p class="text-xl text-blue-100">
+                        Create your personal QR code that connects rescuers with your emergency contacts instantly. Because every second counts when it matters most.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="{{ url_for('auth') }}" class="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:bg-blue-50 transition transform hover:scale-105">
+                            Get Started Now
+                        </a>
+                        <a href="#how-it-works" class="border-2 border-white text-white px-8 py-4 rounded-lg font-bold hover:bg-white/10 transition">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+                <div class="animate-float">
+                    <!-- Adjust width and height as per your need -->
+                    <img src="{{ url_for('static', filename='images/safelink.png') }}" 
+                         alt="Emergency QR Code Demo" 
+                         class="rounded-lg shadow-2xl w-80 h-80 md:w-96 md:h-96 ml-8 md:ml-14">
+                        </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Why Choose QR Guardian?</h2>
+                <p class="mt-4 text-xl text-gray-600">Simple, secure, and potentially life-saving features</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition">
+                    <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-bolt text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Instant Access</h3>
+                    <p class="text-gray-600">Quick scanning provides immediate access to emergency contacts when every second counts.</p>
+                </div>
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition">
+                    <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-lock text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Secure Storage</h3>
+                    <p class="text-gray-600">Your sensitive information is encrypted and protected with industry-standard security.</p>
+                </div>
+                <div class="feature-card bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition">
+                    <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Works Everywhere</h3>
+                    <p class="text-gray-600">Compatible with any smartphone camera - no special app required for scanning.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">How It Works</h2>
+                <p class="mt-4 text-xl text-gray-600">Three simple steps to ensure your safety</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-white">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Sign Up</h3>
+                    <p class="text-gray-600">Create your account and add your emergency contact information</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-white">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Generate QR</h3>
+                    <p class="text-gray-600">Get your unique QR code and print it or save it digitally</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl font-bold text-white">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Stay Protected</h3>
+                    <p class="text-gray-600">Carry your QR code with you for instant emergency assistance</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900">What Our Users Say</h2>
+                <p class="mt-4 text-xl text-gray-600">Join thousands of satisfied users</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <img src="/api/placeholder/50/50" alt="User" class="rounded-full">
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Sarah Johnson</h4>
+                            <p class="text-gray-600">Adventure Cyclist</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"As someone who frequently goes on solo rides, this gives me peace of mind knowing help is just a scan away."</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <img src="/api/placeholder/50/50" alt="User" class="rounded-full">
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Michael Chen</h4>
+                            <p class="text-gray-600">Medical Professional</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"I recommend this to all my patients with medical conditions. It's a simple yet effective emergency response tool."</p>
+                </div>
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <img src="/api/placeholder/50/50" alt="User" class="rounded-full">
+                        <div class="ml-4">
+                            <h4 class="font-bold text-gray-900">Emma Davis</h4>
+                            <p class="text-gray-600">Parent</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"Having QR codes for my kids gives me confidence that they'll get help quickly if needed."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="gradient-bg py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-8">Ready to Secure Your Safety?</h2>
+            <p class="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">Join thousands of users who trust QR Guardian for their emergency contact needs. Set up your profile in minutes.</p>
+            <a href="{{ url_for('auth') }}" class="inline-block bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:bg-blue-50 transition transform hover:scale-105">
+                Get Started For Free
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-shield-alt text-blue-400 text-2xl"></i>
+                        <span class="font-bold text-xl">QR Guardian</span>
+                    </div>
+                    <p class="text-gray-400">Your trusted emergency contact solution.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-gray-400 hover:text-white">Features</a></li>
+                        <li><a href="#how-it-works" class="text-gray-400 hover:text-white">How It Works</a></li>
+                        <li><a href="#testimonials" class="text-gray-400 hover:text-white">Testimonials</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 QR Guardian. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>

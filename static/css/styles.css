@@ -1,0 +1,197 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    height: 100vh;
+    color: #2d3748;
+    line-height: 1.3;
+    overflow: hidden;
+}
+
+/* Navbar Styles */
+.navbar {
+    background: linear-gradient(to right, #2c3e50, #3498db);
+    padding: 0.5rem 1rem;
+    height: 8vh;
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.brand {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.brand-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+/* Container and Form Card */
+.container {
+    height: 92vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1rem;
+}
+
+.form-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+}
+
+/* Form Styles */
+h1 {
+    text-align: center;
+    color: #2d3748;
+    margin-bottom: 1.2rem;
+    font-size: 1.4rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="tel"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* File Upload Styles */
+.file-upload {
+    position: relative;
+    margin-bottom: 0.8rem;
+}
+
+input[type="file"] {
+    position: absolute;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.file-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    background: #f7fafc;
+    border: 2px dashed #cbd5e0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.file-label svg {
+    width: 16px;
+    height: 16px;
+    stroke: #4a5568;
+}
+
+.file-name {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+/* Button Styles */
+.button-group {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #2d3748;
+}
+
+/* Responsive Styles */
+@media (max-height: 600px) {
+    .navbar {
+        height: 6vh;
+    }
+    
+    .container {
+        height: 94vh;
+    }
+    
+    .form-card {
+        padding: 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 0.7rem;
+    }
+    
+    h1 {
+        margin-bottom: 0.8rem;
+        font-size: 1.2rem;
+    }
+}

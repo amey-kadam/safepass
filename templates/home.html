@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a  class="brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3z"/>
+                    <path d="M15 15h2v2h-2z"/>
+                    <path d="M19 15h2v2h-2z"/>
+                    <path d="M15 19h2v2h-2z"/>
+                    <path d="M19 19h2v2h-2z"/>
+                </svg>
+                QR Emergency Contact
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-card">
+            <form method="post" action="{{ url_for('generate_qr') }}" enctype="multipart/form-data">
+                <h1>Enter Your Details</h1>
+                
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact">Emergency Contact Number:</label>
+                    <input type="tel" id="contact" name="contact" placeholder="Enter emergency number" pattern="[0-9]+" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="document">Upload Document:</label>
+                    <div class="file-upload">
+                        <input type="file" id="document" name="document" required>
+                        <label for="document" class="file-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>Choose File</span>
+                        </label>
+                        <span class="file-name">No file chosen</span>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Generate QR Code</button>
+                    <a href="{{ url_for('my_qrcodes') }}" class="btn-secondary">View My Generated QR Codes</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Display filename when file is selected
+        document.getElementById('document').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'No file chosen';
+            document.querySelector('.file-name').textContent = fileName;
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

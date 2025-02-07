@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <title>Verify OTP</title>
+</head>
+<body>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-container">
+                <a href="{{ url_for('landing') }}" class="brand">QR Emergency Contact</a>
+                <div class="nav-links">
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </nav>
+        
+    <h1>Verify OTP</h1>
+    <form method="post" action="{{ url_for('main.verify_otp') }}">
+        <input type="hidden" name="user_id" value="{{ user_id }}">
+        <label for="otp">OTP:</label>
+        <input type="text" id="otp" name="otp" required>
+        <br>
+        <button type="submit">Verify OTP</button>
+    </form>
+</body>
+</html>
