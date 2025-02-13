@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Admin Dashboard</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+ 
+
+        <h2>Pending Contacts</h2>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Contact</th>
+                        <th>Document</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contacts %}
+                    <tr>
+                        <td>{{ contact.name }}</td>
+                        <td>{{ contact.contact }}</td>
+                        <td>
+                            {% if contact.document_path %}
+                            <a href="{{ url_for('download_file', filename=contact.document_path) }}">View Document</a>
+                            {% else %}
+                            No document
+                            {% endif %}
+                        </td>
+                        <td>{{ contact.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ contact.status }}</td>
+                        <td>
+                            {% if contact.status == 'pending' %}
+                            <a href="{{ url_for('approve_contact', contact_id=contact.id) }}" class="btn btn-success btn-sm">Approve</a>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#denyModal{{ contact.id }}">
+                                Deny
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    
+                    <!-- Deny Modal -->
+                    <div class="modal fade" id="denyModal{{ contact.id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Deny Contact</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form action="{{ url_for('deny_contact', contact_id=contact.id) }}" method="POST">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="comment" class="form-label">Reason for denial</label>
+                                            <textarea class="form-control" name="comment" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-danger">Deny</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

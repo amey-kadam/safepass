@@ -1,247 +1,236 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Generated QR Codes</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
+{% extends "base.html" %}
 
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            color: #2d3748;
-        }
+{% block title %}SafePass Drive{% endblock %}
 
-        .header {
-            background: linear-gradient(to right, #2c3e50, #3498db);
-            padding: 1rem 2rem;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+{% block header_title %}SafePass Drive{% endblock %}
 
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
+{% block header_button %}
+<a href="{{ url_for('logout') }}" class="nav-button">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Logout
+</a>
+{% endblock %}
 
-        .back-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            padding: 0.5rem 1rem;
-            text-decoration: none;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
+{% block extra_css %}
+<style>
+    .alert {
+        background: #ebf8ff;
+        border-left: 4px solid #3498db;
+        color: #2b6cb0;
+        padding: 1rem 2rem;
+        margin: 1rem 2rem;
+        border-radius: 4px;
+    }
 
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+    .qr-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .qr-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .qr-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .qr-image {
+        background: #f8fafc;
+        padding: 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .qr-image img {
+        max-width: 180px;
+        height: auto;
+    }
+
+    .details {
+        padding: 1.2rem;
+    }
+
+    .details h3 {
+        color: #2d3748;
+        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .details p {
+        color: #4a5568;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .details strong {
+        color: #2d3748;
+        min-width: 80px;
+    }
+
+    .download-btn {
+        display: block;
+        background: #3498db;
+        color: white;
+        text-decoration: none;
+        padding: 0.8rem;
+        text-align: center;
+        border-radius: 6px;
+        margin-top: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .download-btn:hover {
+        background: #2980b9;
+    }
+
+    .delete-btn {
+        display: block;
+        background: #e74c3c;
+        color: white;
+        text-decoration: none;
+        padding: 0.8rem;
+        text-align: center;
+        border-radius: 6px;
+        margin-top: 0.5rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+        background: #c0392b;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 12px;
+        margin: 2rem auto;
+        max-width: 600px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .empty-state h2 {
+        color: #2d3748;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: #718096;
+    }
+
+    /* New styles for status indicators */
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: capitalize;
+        margin-bottom: 0.5rem;
+    }
+
+    .status-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-approved {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-denied {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .admin-comment {
+        background-color: #f3f4f6;
+        border-radius: 6px;
+        padding: 0.75rem;
+        margin: 0.5rem 0;
+        font-size: 0.875rem;
+        color: #4b5563;
+    }
+
+    @media (max-width: 640px) {
+        .qr-grid {
+            padding: 1rem;
+            grid-template-columns: 1fr;
         }
 
         .alert {
-            background: #ebf8ff;
-            border-left: 4px solid #3498db;
-            color: #2b6cb0;
-            padding: 1rem 2rem;
-            margin: 1rem 2rem;
-            border-radius: 4px;
-        }
-
-        .qr-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .qr-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .qr-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .qr-image {
-            background: #f8fafc;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .qr-image img {
-            max-width: 180px;
-            height: auto;
-        }
-
-        .details {
-            padding: 1.2rem;
-        }
-
-        .details h3 {
-            color: #2d3748;
-            font-size: 1.1rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .details p {
-            color: #4a5568;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .details strong {
-            color: #2d3748;
-            min-width: 80px;
-        }
-
-        .download-btn {
-            display: block;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            padding: 0.8rem;
-            text-align: center;
-            border-radius: 6px;
-            margin-top: 1rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .download-btn:hover {
-            background: #2980b9;
+            margin: 1rem;
         }
 
         .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: white;
-            border-radius: 12px;
-            margin: 2rem auto;
-            max-width: 600px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 1rem;
         }
+    }
+</style>
+{% endblock %}
 
-        .empty-state h2 {
-            color: #2d3748;
-            margin-bottom: 1rem;
-        }
-
-        .empty-state p {
-            color: #718096;
-        }
-
-        .delete-btn {
-            display: block;
-            background: #e74c3c;
-            color: white;
-            text-decoration: none;
-            padding: 0.8rem;
-            text-align: center;
-            border-radius: 6px;
-            margin-top: 0.5rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            background: #c0392b;
-        }
-
-        /* Add some spacing between buttons */
-        .details a:not(:first-child) {
-            margin-top: 0.5rem;
-        }
-
-        @media (max-width: 640px) {
-            .header {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .qr-grid {
-                padding: 1rem;
-                grid-template-columns: 1fr;
-            }
-
-            .alert {
-                margin: 1rem;
-            }
-
-            .empty-state {
-                margin: 1rem;
-            }
-
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>My Generated QR Codes</h1>
-        <a href="{{ url_for('dashboard') }}" class="back-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Dashboard
-        </a>
-    </div>
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
+{% block content %}
     {% if contacts %}
         <div class="qr-grid">
             {% for contact in contacts %}
             <div class="qr-card">
                 <div class="qr-image">
-                    {% if contact.qr_code_path %}
+                    {% if contact.status == 'approved' and contact.qr_code_path %}
                     <img src="{{ url_for('download_file', filename=contact.qr_code_path) }}" 
                          alt="QR Code for {{ contact.name }}">
+                    {% elif contact.status == 'pending' %}
+                    <div style="text-align: center; padding: 2rem;">
+                        <p style="color: #92400e;">Pending Admin Approval</p>
+                    </div>
+                    {% elif contact.status == 'denied' %}
+                    <div style="text-align: center; padding: 2rem;">
+                        <p style="color: #991b1b;">Request Denied</p>
+                    </div>
                     {% endif %}
                 </div>
                 <div class="details">
+                    <div class="status-badge status-{{ contact.status }}">
+                        {{ contact.status }}
+                    </div>
                     <h3>{{ contact.name }}</h3>
                     <p><strong>Contact:</strong> {{ contact.contact }}</p>
                     {% if contact.document_path %}
                     <p><strong>Document:</strong> {{ contact.document_path.split('/')[-1] }}</p>
-                    
                     {% endif %}
-                    {% if contact.qr_code_path %}
+                    {% if contact.status == 'denied' and contact.admin_comment %}
+                    <div class="admin-comment">
+                        <strong>Admin Comment:</strong><br>
+                        {{ contact.admin_comment }}
+                    </div>
+                    {% endif %}
+                    {% if contact.status == 'approved' and contact.qr_code_path %}
                     <a href="{{ url_for('download_file', filename=contact.qr_code_path) }}" 
                        class="download-btn">Download QR Code</a>
                     {% endif %}
                     <a href="{{ url_for('delete_contact', contact_id=contact.id) }}" 
                        class="delete-btn" 
                        onclick="return confirm('Are you sure you want to delete this contact and associated files?');">
-                        Delete QR code
+                        Delete Request
                     </a>
                 </div>
             </div>
@@ -253,5 +242,4 @@
             <p>Start by generating a new QR code from the dashboard.</p>
         </div>
     {% endif %}
-</body>
-</html>
+{% endblock %}
