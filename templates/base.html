@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SafePass Drive{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .header {
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .nav-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .alert {
+            padding: 1rem 2rem;
+            margin: 1rem 2rem;
+            border-radius: 4px;
+        }
+
+        .alert.success {
+            background: #ebf8ff;
+            border-left: 4px solid #3498db;
+            color: #2b6cb0;
+        }
+
+        .alert.error {
+            background: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            color: #c53030;
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="header">
+        <h1>{% block header_title %}SafePass Drive{% endblock %}</h1>
+        {% block header_button %}{% endblock %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

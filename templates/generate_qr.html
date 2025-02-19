@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Generate Emergency QR Code</h2>
+    
+    <form method="POST" action="{{ url_for('generate_qr') }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+        <!-- Personal Details Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4>Personal Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="full_name" class="form-label">Full Name *</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="date_of_birth" class="form-label">Date of Birth *</label>
+                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="gender" class="form-label">Gender *</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="" selected disabled>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="blood_group" class="form-label">Blood Group *</label>
+                        <select class="form-select" id="blood_group" name="blood_group" required>
+                            <option value="" selected disabled>Select Blood Group</option>
+                            <option value="A+ve">A+ve</option>
+                            <option value="B+ve">B+ve</option>
+                            <option value="AB+ve">AB+ve</option>
+                            <option value="O+ve">O+ve</option>
+                            <option value="A-ve">A-ve</option>
+                            <option value="B-ve">B-ve</option>
+                            <option value="AB-ve">AB-ve</option>
+                            <option value="O-ve">O-ve</option>
+
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="mobile" class="form-label">Mobile Number *</label>
+                        <input type="tel" class="form-control" id="mobile" name="mobile" pattern="[0-9]{10}" required>
+                        <div class="form-text">10-digit mobile number</div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email ID *</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="aadhaar_number" class="form-label">Aadhaar Card Number *</label>
+                        <input type="text" class="form-control" id="aadhaar_number" name="aadhaar_number" pattern="[0-9]{12}" required>
+                        <div class="form-text">12-digit Aadhaar number</div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="pan_number" class="form-label">PAN Card Number (Optional)</label>
+                        <input type="text" class="form-control" id="pan_number" name="pan_number" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}">
+                        <div class="form-text">10-character PAN number</div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="permanent_address" class="form-label">Permanent Address *</label>
+                        <textarea class="form-control" id="permanent_address" name="permanent_address" rows="3" required></textarea>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="current_address" class="form-label">Current Address *</label>
+                        <textarea class="form-control" id="current_address" name="current_address" rows="3" required></textarea>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="sameAsPermAddress" onchange="copyAddress()">
+                            <label class="form-check-label" for="sameAsPermAddress">
+                                Same as Permanent Address
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vehicle Details Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4>Vehicle Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="vehicle_number" class="form-label">Vehicle Registration Number *</label>
+                        <input type="text" class="form-control" id="vehicle_number" name="vehicle_number" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="vehicle_model" class="form-label">Vehicle Model *</label>
+                        <input type="text" class="form-control" id="vehicle_model" name="vehicle_model" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="vehicle_type" class="form-label">Vehicle Type *</label>
+                        <select class="form-select" id="vehicle_type" name="vehicle_type" required>
+                            <option value="" selected disabled>Select Vehicle Type</option>
+                            <option value="">Select Vehicle Type</option>
+                            <option value="Two wheeler">Two Wheeler</option>
+                            <option value="Four Wheeler">Four Wheeler</option>
+                            <option value="Truck">Truck</option>
+                            <option value="Rickshaw">Rickshaw</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="insurance_policy" class="form-label">Insurance Policy Number *</label>
+                        <input type="text" class="form-control" id="insurance_policy" name="insurance_policy" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="puc_number" class="form-label">PUC Certificate Number *</label>
+                        <input type="text" class="form-control" id="puc_number" name="puc_number" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Driving License Details Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4>Driving License Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="license_number" class="form-label">Driving License Number *</label>
+                        <input type="text" class="form-control" id="license_number" name="license_number" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="license_expiry" class="form-label">License Expiry Date *</label>
+                        <input type="date" class="form-control" id="license_expiry" name="license_expiry" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Document Uploads Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4>Document Uploads</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="profile_picture" class="form-label">Profile Picture</label>
+                        <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="aadhaar_card" class="form-label">Aadhaar Card * (PDF/JPG)</label>
+                        <input type="file" class="form-control" id="aadhaar_card" name="aadhaar_card" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="pan_card" class="form-label">PAN Card (PDF/JPG)</label>
+                        <input type="file" class="form-control" id="pan_card" name="pan_card" accept=".pdf,.jpg,.jpeg,.png">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="driving_license" class="form-label">Driving License * (PDF/JPG)</label>
+                        <input type="file" class="form-control" id="driving_license" name="driving_license" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="insurance_policy" class="form-label">Insurance Policy * (PDF)</label>
+                        <input type="file" class="form-control" id="insurance_policy_doc" name="insurance_policy" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="puc_certificate" class="form-label">PUC Certificate * (PDF/JPG)</label>
+                        <input type="file" class="form-control" id="puc_certificate" name="puc_certificate" accept=".pdf,.jpg,.jpeg,.png" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <p><small>Fields marked with * are required</small></p>
+            <button type="submit" class="btn btn-primary">Generate QR Code</button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Function to copy permanent address to current address
+    function copyAddress() {
+        if (document.getElementById('sameAsPermAddress').checked) {
+            document.getElementById('current_address').value = document.getElementById('permanent_address').value;
+            document.getElementById('current_address').disabled = true;
+        } else {
+            document.getElementById('current_address').disabled = false;
+        }
+    }
+    
+    // Form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

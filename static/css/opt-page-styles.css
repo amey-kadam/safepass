@@ -1,0 +1,166 @@
+/* Option Page Styles */
+:root {
+    --primary-color: #dc3545;
+    --secondary-color: #ffc107;
+    --text-color: #333;
+    --light-bg: #f8f9fa;
+    --border-radius: 10px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: var(--text-color);
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow: hidden;
+
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary-color);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.navbar-content {
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-right: 80%;
+}
+
+.navbar-brand {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand i {
+    margin-right: 10px;
+    font-size: 1.8rem;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+
+
+/* Main Content */
+.main-container {
+    padding: 90px 20px 20px;
+    max-width: 600px;
+    margin-top: 10%;
+    margin-left: 27%;
+}
+
+.options-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.options-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.options-title {
+    color: var(--text-color);
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.options-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.option-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.option-button i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.authorize-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.emergency-btn {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.option-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow);
+    opacity: 0.95;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem 1rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .main-container {
+        padding: 80px 15px 15px;
+    }
+    
+    .options-title {
+        font-size: 1.5rem;
+    }
+    
+    .option-button {
+        padding: 0.8rem;
+        font-size: 1rem;
+    }
+}

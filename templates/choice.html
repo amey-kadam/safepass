@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}SafePass Drive{% endblock %}
+
+{% block header_title %}SafePass Drive{% endblock %}
+
+{% block header_button %}
+<a href="{{ url_for('logout') }}" class="nav-button">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Logout
+</a>
+{% endblock %}
+
+{% block extra_css %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+
+        .brand {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+      
+
+        .container {
+            max-width: 600px;
+            margin: 4rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 11%;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+ 
+
+        .button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .button-primary {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: linear-gradient(to right, #2980b9, #2471a3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-danger {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .button-danger:hover {
+            background: linear-gradient(to right, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                margin: 2rem 1rem;
+                padding: 1.5rem;
+            }
+
+     
+            .brand {
+                font-size: 1.2rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .button {
+                padding: 0.8rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    
+    <div class="container">
+        <h1>Choose an Option</h1>
+        <a href="{{ url_for('dashboard', unique_id=unique_id) }}" class="button button-primary">Generate QR Codes</a>
+        <a href="{{ url_for('my_qrcodes', unique_id=unique_id) }}" class="button button-danger">View My QR Codes</a>
+    </div>
+</body>
+</html>
+
+{% endblock %}

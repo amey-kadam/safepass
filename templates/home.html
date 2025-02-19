@@ -1,92 +1,502 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a  class="brand">
-                <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3z"/>
-                    <path d="M15 15h2v2h-2z"/>
-                    <path d="M19 15h2v2h-2z"/>
-                    <path d="M15 19h2v2h-2z"/>
-                    <path d="M19 19h2v2h-2z"/>
-                </svg>
-                QR Emergency Contact
-            </a>
-            <div class="nav-links">
-                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
-            </div>
-        </div>
-    </nav>
+{% extends "base.html" %}
 
-    <div class="container">
-        <div class="form-card">
-            <form method="post" action="{{ url_for('generate_qr') }}" enctype="multipart/form-data">
-                <h1>Enter Your Details</h1>
+{% block title %}SafePass Drive Drive{% endblock %}
+
+{% block header_title %}SafePass Drive Drive{% endblock %}
+
+{% block header_button %}
+<a href="{{ url_for('logout') }}" class="nav-button">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Logout
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .container {
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-card h1 {
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1.5rem;
+    }
+    
+    .form-section h2 {
+        color: #3498db;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-width: 250px;
+        margin-bottom: 1rem;
+    }
+
+    .form-group.full-width {
+        flex: 0 0 100%;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+        font-weight: 500;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="tel"],
+    .form-group input[type="email"],
+    .form-group input[type="date"],
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #3498db;
+    }
+
+    .file-upload {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .file-upload input[type="file"] {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .file-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+    .file-label:hover {
+        background: #edf2f7;
+    }
+
+    .file-label svg {
+        width: 20px;
+        height: 20px;
+        stroke: #4a5568;
+    }
+
+    .file-name {
+        margin-left: 1rem;
+        color: #718096;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        text-align: center;
+        transition: all 0.3s ease;
+        flex: 1;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #3498db;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background: #2980b9;
+    }
+
+    .btn-secondary {
+        background: #f7fafc;
+        color: #4a5568;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #edf2f7;
+    }
+    
+    .required::after {
+        content: "*";
+        color: #e53e3e;
+        margin-left: 3px;
+    }
+
+    @media (max-width: 768px) {
+        .form-group {
+            flex: 0 0 100%;
+        }
+        
+        .container {
+            padding: 1rem;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card">
+        <form method="post" action="{{ url_for('generate_qr') }}" enctype="multipart/form-data">
+            <h1>SafePass Driver Information</h1>
+            
+            <!-- Personal Details Section -->
+            <div class="form-section">
+                <h2>Personal Details</h2>
                 
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="full_name" class="required">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date_of_birth" class="required">Date of Birth</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" required>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="contact">Emergency Contact Number:</label>
-                    <input type="tel" id="contact" name="contact" placeholder="Enter emergency number" pattern="[0-9]+" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gender" class="required">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="blood_group" class="required">Blood Group</label>
+                        <select id="blood_group" name="blood_group" required>
+                            <option value="" selected disabled>Select Blood Group</option>
+                            <option value="A+ve">A+ve</option>
+                            <option value="B+ve">B+ve</option>
+                            <option value="AB+ve">AB+ve</option>
+                            <option value="O+ve">O+ve</option>
+                            <option value="A-ve">A-ve</option>
+                            <option value="B-ve">B-ve</option>
+                            <option value="AB-ve">AB-ve</option>
+                            <option value="O-ve">O-ve</option>
+
+                        </select>
+                    </div>
                 </div>
                 
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email" class="required">Email ID</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mobile" class="required">Mobile Number</label>
+                        <input type="tel" id="mobile" name="mobile" placeholder="Enter your mobile number" pattern="[0-9]+" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="aadhaar_number" class="required">Aadhaar Card Number</label>
+                        <input type="text" id="aadhaar_number" name="aadhaar_number" placeholder="12-digit Aadhaar number" pattern="[0-9]{12}" maxlength="12" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pan_number">PAN Card Number (Optional)</label>
+                        <input type="text" id="pan_number" name="pan_number" placeholder="10-digit PAN number" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" maxlength="10">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="permanent_address" class="required">Permanent Address</label>
+                    <textarea id="permanent_address" name="permanent_address" placeholder="Enter your permanent address" required></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="current_address" class="required">Current Address</label>
+                    <textarea id="current_address" name="current_address" placeholder="Enter your current address" required></textarea>
+                </div>
+            </div>
+            
+            <!-- Vehicle Details Section -->
+            <div class="form-section">
+                <h2>Vehicle Details</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vehicle_number" class="required">Vehicle Number</label>
+                        <input type="text" id="vehicle_number" name="vehicle_number" placeholder="Enter vehicle registration number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="vehicle_model" class="required">Vehicle Model</label>
+                        <input type="text" id="vehicle_model" name="vehicle_model" placeholder="Enter vehicle model" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vehicle_type" class="required">Vehicle Type</label>
+                        <select id="vehicle_type" name="vehicle_type" required>
+                            <option value="">Select Vehicle Type</option>
+                            <option value="Two wheeler">Two Wheeler</option>
+                            <option value="Four Wheeler">Four Wheeler</option>
+                            <option value="Truck">Truck</option>
+                            <option value="Rickshaw">Rickshaw</option>
+
+
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="insurance_policy" class="required">Insurance Policy Number</label>
+                        <input type="text" id="insurance_policy" name="insurance_policy" placeholder="Enter insurance policy number" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="puc_number" class="required">PUC Certificate Number</label>
+                        <input type="text" id="puc_number" name="puc_number" placeholder="Enter PUC certificate number" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- License Details Section -->
+            <div class="form-section">
+                <h2>Driving License Details</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="license_number" class="required">Driving License Number</label>
+                        <input type="text" id="license_number" name="license_number" placeholder="Enter driving license number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="license_expiry" class="required">License Expiry Date</label>
+                        <input type="date" id="license_expiry" name="license_expiry" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Document Upload Section -->
+            <div class="form-section">
+                <h2>Document Uploads</h2>
+                
                 <div class="form-group">
-                    <label for="document">Upload Document:</label>
+                    <label for="profile_picture" class="required">Profile Picture</label>
                     <div class="file-upload">
-                        <input type="file" id="document" name="document" required>
-                        <label for="document" class="file-label">
+                        <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg,image/png" required>
+                        <label for="profile_picture" class="file-label">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            <span>Choose File</span>
+                            <span>Upload Profile Picture</span>
                         </label>
-                        <span class="file-name">No file chosen</span>
+                        <span class="file-name profile_picture_name">No file chosen</span>
                     </div>
                 </div>
                 
-                <div class="button-group">
-                    <button type="submit" class="btn-primary">Generate QR Code</button>
-                    <a href="{{ url_for('my_qrcodes') }}" class="btn-secondary">View My Generated QR Codes</a>
+                <div class="form-group">
+                    <label for="aadhaar_card" class="required">Aadhaar Card</label>
+                    <div class="file-upload">
+                        <input type="file" id="aadhaar_card" name="aadhaar_card" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <label for="aadhaar_card" class="file-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>Upload Aadhaar Card</span>
+                        </label>
+                        <span class="file-name aadhaar_card_name">No file chosen</span>
+                    </div>
                 </div>
-            </form>
-        </div>
+                
+                <div class="form-group">
+                    <label for="pan_card">PAN Card (Optional)</label>
+                    <div class="file-upload">
+                        <input type="file" id="pan_card" name="pan_card" accept=".pdf,.jpg,.jpeg,.png">
+                        <label for="pan_card" class="file-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>Upload PAN Card</span>
+                        </label>
+                        <span class="file-name pan_card_name">No file chosen</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="driving_license" class="required">Driving License</label>
+                    <div class="file-upload">
+                        <input type="file" id="driving_license" name="driving_license" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <label for="driving_license" class="file-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>Upload Driving License</span>
+                        </label>
+                        <span class="file-name driving_license_name">No file chosen</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="insurance_policy" class="required">Insurance Policy</label>
+                    <div class="file-upload">
+                        <input type="file" id="insurance_policy_doc" name="insurance_policy" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <label for="insurance_policy_doc" class="file-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>Upload Insurance Policy</span>
+                        </label>
+                        <span class="file-name insurance_policy_name">No file chosen</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="puc_certificate" class="required">PUC Certificate</label>
+                    <div class="file-upload">
+                        <input type="file" id="puc_certificate" name="puc_certificate" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <label for="puc_certificate" class="file-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>Upload PUC Certificate</span>
+                        </label>
+                        <span class="file-name puc_certificate_name">No file chosen</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Generate QR Code</button>
+                <a href="{{ url_for('my_qrcodes') }}" class="btn-secondary">View My Generated QR Codes</a>
+            </div>
+        </form>
     </div>
+</div>
+{% endblock %}
 
-    <script>
-        // Display filename when file is selected
-        document.getElementById('document').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name || 'No file chosen';
-            document.querySelector('.file-name').textContent = fileName;
-        });
-    </script>
-</body>
-</html>
+{% block extra_js %}
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        // Prevent multiple submissions
+        const submitButton = this.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+        }
+    });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Display filename when file is selected for each file input
+    const fileInputs = [
+        'profile_picture', 'aadhaar_card', 'pan_card', 
+        'driving_license', 'insurance_policy_doc', 'puc_certificate'
+    ];
+    
+    fileInputs.forEach(inputId => {
+        const element = document.getElementById(inputId);
+        if (element) {
+            element.addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name || 'No file chosen';
+                const nameSpan = document.querySelector(`.${inputId === 'insurance_policy_doc' ? 'insurance_policy' : inputId}_name`);
+                if (nameSpan) {
+                    nameSpan.textContent = fileName;
+                }
+                
+                // Validate file type
+                const allowedTypes = ['pdf', 'png', 'jpg', 'jpeg'];
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+                
+                if (!allowedTypes.includes(fileExtension)) {
+                    alert('Invalid file type. Allowed types are: ' + allowedTypes.join(', '));
+                    this.value = ''; // Clear the file input
+                    if (nameSpan) {
+                        nameSpan.textContent = 'No file chosen';
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,350 @@
+/* Emergency Information Styles */
+:root {
+    --primary-color: #dc3545;
+    --secondary-color: #ffc107;
+    --text-color: #333;
+    --light-bg: #f8f9fa;
+    --border-radius: 10px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: var(--text-color);
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 8px;
+}
+
+
+.main-container {
+    padding: 90px 20px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary-color);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.navbar-content {
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    margin-right: 80%;
+}
+
+.navbar-brand {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand i {
+    margin-right: 10px;
+    font-size: 1.8rem;
+}
+
+
+.emergency-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    max-width: 400px;
+    max-height: 92vh;
+    overflow: hidden;
+}
+
+/* Alert Banner */
+.alert-banner {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+}
+
+.alert-icon {
+    font-size: 1.6rem;
+    margin-right: 12px;
+}
+
+.alert-banner h2 {
+    margin: 0 0 3px 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.alert-banner p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.85rem;
+}
+
+/* Profile Section */
+.profile-section {
+    padding: 15px 12px;
+    text-align: center;
+}
+
+.profile-image {
+    margin-bottom: 12px;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--light-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.initial-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.initial-circle span {
+    font-size: 2.8rem;
+    font-weight: bold;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: var(--primary-color);
+}
+
+/* Details List */
+.details-list {
+    margin-bottom: 18px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background-color: var(--light-bg);
+    margin-bottom: 6px;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.detail-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.detail-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.detail-label i {
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+.blood-icon {
+    color: var(--primary-color);
+}
+
+.blood-type {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Emergency Actions */
+.emergency-actions {
+    padding: 0 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.location-btn, .call-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.location-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.call-btn {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.location-btn:hover, .call-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 0.95;
+}
+
+.location-btn i, .call-btn i {
+    margin-right: 8px;
+    font-size: 1rem;
+}
+
+.location-btn.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+/* No Data Message */
+.no-data-message {
+    padding: 25px 12px;
+    text-align: center;
+}
+
+.no-data-message i {
+    font-size: 2.2rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.no-data-message h4 {
+    margin-bottom: 6px;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.no-data-message p {
+    color: #6c757d;
+    max-width: 260px;
+    margin: 0 auto;
+    font-size: 0.9rem;
+}
+
+/* Animation for loading spinner */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notification System */
+.notification {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background-color: white;
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification.success .notification-icon {
+    color: #28a745;
+}
+
+.notification.error .notification-icon {
+    color: #dc3545;
+}
+
+.notification-icon {
+    font-size: 1.3rem;
+    margin-right: 10px;
+}
+
+.notification-message {
+    font-size: 0.85rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .main-container {
+        padding: 5px;
+    }
+    
+    .profile-image img,
+    .initial-circle {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .initial-circle span {
+        font-size: 2.2rem;
+    }
+    
+    .profile-name {
+        font-size: 1.3rem;
+    }
+    
+    .detail-item {
+        padding: 7px 8px;
+    }
+    
+    .location-btn, .call-btn {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+    
+    .emergency-actions {
+        padding: 0 10px 15px;
+    }
+}

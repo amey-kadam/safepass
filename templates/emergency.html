@@ -1,231 +1,181 @@
-{% extends "base.html" %}
-
-{% block title %}SafePass Drive{% endblock %}
-
-{% block header_title %}SafePass Drive{% endblock %}
-
-{% block header_button %}
-<a href="{{ url_for('logout') }}" class="nav-button">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/>
-        <line x1="21" y1="12" x2="9" y2="12"/>
-    </svg>
-    Logout
-</a>
-{% endblock %}
- 
-{% block extra_css %}
-
-    <style>
-   /* Base Container Styles */
-.container {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-/* Main Title Styles */
-.container h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1a202c;
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 3px solid #e2e8f0;
-}
-
-/* Info Section Container */
-.info-section {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.info-section:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-/* Info Row Styles */
-.info-section p {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
-    margin: 0;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.info-section p:last-child {
-    border-bottom: none;
-}
-
-/* Label Styles */
-.info-label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #2d3748;
-    flex: 1;
-    text-align: left;
-}
-
-/* Value Styles */
-.info-value {
-    font-size: 1.1rem;
-    color: #4a5568;
-    flex: 2;
-    text-align: right;
-    word-break: break-word;
-}
-
-/* Emergency Button Styles */
-button {
-    width: 100%;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 1rem 1.5rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-button:hover {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-/* Button Text Styles */
-.btn-text {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Navigation Button Styles */
-.nav-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    background-color: #f3f4f6;
-    color: #4b5563;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.nav-button:hover {
-    background-color: #e5e7eb;
-    color: #1f2937;
-}
-
-.nav-button svg {
-    transition: transform 0.2s ease;
-}
-
-.nav-button:hover svg {
-    transform: translateX(2px);
-}
-
-/* Loading State */
-.loading {
-    position: relative;
-    pointer-events: none;
-}
-
-.loading .btn-text {
-    opacity: 0;
-}
-
-.loading::after {
-    content: "";
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 640px) {
-    .container {
-        margin: 1rem auto;
-    }
-
-    .container h1 {
-        font-size: 1.75rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .info-section {
-        padding: 1.5rem;
-    }
-
-    .info-label,
-    .info-value {
-        font-size: 1rem;
-    }
-
-    button {
-        padding: 0.875rem 1.25rem;
-        font-size: 1rem;
-    }
-
-    .nav-button {
-        padding: 0.625rem 1rem;
-    }
-}
-    </style>
-{% endblock %}
-
-{% block content %}
-
-
-    <div class="container">
-        <h1>Emergency Contact Information</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Information</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/emergency-styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="navbar-brand">
+                <i class="bi bi-shield-check"></i>
+                SafePass Drive
+            </a>
         
-        <div class="info-section">
-            <p>
-                <span class="info-label">Name:</span>
-                <span class="info-value">{{ name }}</span>
-            </p>
-            <p>
-                <span class="info-label">Contact:</span>
-                <span class="info-value">{{ contact }}</span>
-            </p>
         </div>
+    </nav>
+    <div class="main-container">
+        <div class="emergency-card">
+            <div class="alert-banner">
+                <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
+                <div>
+                    <h2>Emergency Information</h2>
+                    <p>This information is meant for emergency purposes only.</p>
+                </div>
+            </div>
 
-        <button>
-            <span class="btn-text">Send Emergency Location</span>
-        </button>
+            {% if contact_data %}
+            <div class="profile-section">
+                <div class="profile-image">
+                    {% if profile_pic %}
+                    <img src="{{ url_for('uploaded_file', filename=profile_pic) }}" alt="Profile Picture">
+                    {% else %}
+                    <div class="initial-circle">
+                        <span>{{ name[0] | upper }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <h3 class="profile-name">{{ name }}</h3>
+                
+               <!-- This is just the template section that needs fixing -->
+                <div class="details-list">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="bi bi-droplet-fill blood-icon"></i>
+                            <span>Blood Group</span>
+                        </div>
+                        <!-- Fix: Ensure this displays blood_group value, not gender -->
+                        <div class="detail-value blood-type">{{ blood_group if blood_group else 'Not specified' }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="bi bi-gender-ambiguous"></i>
+                            <span>Gender</span>
+                        </div>
+                        <div class="detail-value">{{ gender }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="bi bi-telephone-fill"></i>
+                            <span>Contact</span>
+                        </div>
+                        <div class="detail-value">{{ contact }}</div>
+                    </div>
+                </div>
+
+            <div class="emergency-actions">
+                <button class="location-btn" id="sendLocationBtn">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span>Share Current Location</span>
+                </button>
+                
+                <a href="tel:{{ contact }}" class="call-btn">
+                    <i class="bi bi-telephone-fill"></i>
+                    <span>Call Emergency Contact</span>
+                </a>
+            </div>
+            {% else %}
+            <div class="no-data-message">
+                <i class="bi bi-exclamation-circle"></i>
+                <h4>No emergency information available</h4>
+                <p>Please contact your administrator to set up your emergency information.</p>
+            </div>
+            {% endif %}
+        </div>
     </div>
 
-    {% endblock %}
+    <script>
+        document.getElementById('sendLocationBtn').addEventListener('click', function() {
+            const button = this;
+            button.disabled = true;
+            button.classList.add('loading');
+            button.innerHTML = '<i class="bi bi-hourglass-split"></i><span>Getting Location...</span>';
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+                    
+                    button.innerHTML = '<i class="bi bi-arrow-repeat spin"></i><span>Sending Location...</span>';
+                    
+                    // Send location to server
+                    fetch('/send_location', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            unique_id: '{{ unique_id }}',
+                            latitude: latitude,
+                            longitude: longitude
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        showNotification('Location shared successfully with emergency services');
+                        
+                        // Open location in Google Maps
+                        window.open(`https://www.google.com/maps?q=${latitude},${longitude}`, '_blank');
+                        
+                        // Reset button
+                        button.disabled = false;
+                        button.classList.remove('loading');
+                        button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        showNotification('Failed to share location', 'error');
+                        
+                        // Reset button
+                        button.disabled = false;
+                        button.classList.remove('loading');
+                        button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+                    });
+                }, function() {
+                    showNotification('Unable to retrieve your location', 'error');
+                    
+                    // Reset button
+                    button.disabled = false;
+                    button.classList.remove('loading');
+                    button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+                });
+            } else {
+                showNotification('Geolocation is not supported by your browser', 'error');
+                button.disabled = false;
+                button.classList.remove('loading');
+                button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+            }
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+                </div>
+                <div class="notification-message">${message}</div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

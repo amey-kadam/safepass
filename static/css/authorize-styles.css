@@ -1,0 +1,344 @@
+/* Authorization Page Styles */
+:root {
+    --primary-color: #dc3545;
+    --secondary-color: #ffc107;
+    --text-color: #333;
+    --light-bg: #f8f9fa;
+    --border-radius: 10px;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: var(--text-color);
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-container {
+    padding: 90px 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap; /* Enable wrapping */
+    gap: 20px;
+}
+
+.container-row {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: var(--primary-color);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.navbar-content {
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    margin-right: 80%;
+}
+
+/* Section Cards */
+
+.sections-container {
+    display: flex;
+    gap: 25px; /* Increased gap between containers */
+    justify-content: center;
+    width: 100%;
+}
+
+
+.info-section {
+    flex: 1 1 30%; /* Allow sections to grow/shrink */
+    min-width: 300px; /* Minimum width for smaller screens */
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.section-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    border-radius: 20px 20px 0 0;
+
+}
+
+.section-header i {
+    font-size: 1.6rem;
+    margin-right: 12px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Details Grid */
+.details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+}
+
+.detail-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: var(--light-bg);
+    border-radius: 15px;
+    transition: var(--transition);
+}
+
+.detail-label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: #666;
+    min-width: 0;  /* Allow text to wrap */
+}
+
+.detail-label i {
+    margin-right: 8px;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    flex-shrink: 0;  /* Prevent icon from shrinking */
+}
+
+.detail-label span {
+    white-space: nowrap;  /* Keep label text on one line */
+}
+
+.detail-value {
+    font-weight: 600;
+    color: var(--text-color);
+    text-align: right;
+    margin-left: 10px;
+    word-break: break-word;  /* Allow long values to wrap */
+}
+
+/* Document Grid */
+.document-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+}
+
+.document-item {
+    background: var(--light-bg);
+    padding: 15px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.document-icon {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.document-info {
+    flex: 1;
+    min-width: 0;  /* Allow text to wrap */
+}
+
+.document-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.emergency-actions {
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: row; /* Ensure row layout */
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 0 20px 20px;
+    flex-wrap: nowrap; /* Prevent wrapping */
+}
+
+/* Add these styles to maintain button appearance */
+.action-button {
+    border: none;
+    border-radius: 15px;
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Space between icon and text */
+    font-weight: 600;
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none !important;
+    box-shadow: var(--box-shadow);
+}
+
+/* Hover effects */
+.primary-action:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-2px);
+}
+
+.secondary-action:hover {
+    background-color: #e0a800 !important;
+    transform: translateY(-2px);
+}
+
+/* Loading state */
+.action-button.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+/* Spin animation for loading icon */
+.bi-arrow-repeat.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Ensure text alignment */
+.action-button span {
+    white-space: nowrap;
+    font-size: 1rem;
+}
+
+/* Icon sizing */
+.action-button i {
+    font-size: 1.2rem;
+}
+
+.primary-action {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.secondary-action {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+/* Profile Section adjustments */
+.profile-section {
+    padding: 15px;
+}
+
+.profile-name {
+    font-size: 1.2rem;
+    margin: 10px 0;
+    word-break: break-word;
+}
+
+
+/* Add to authorize-styles.css */
+.profile-section {
+    text-align: center;
+    padding: 20px 15px;
+}
+
+.profile-image {
+    margin-bottom: 15px;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--light-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.initial-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.initial-circle span {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.profile-name {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 15px 0;
+    color: var(--primary-color);
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .main-container {
+        flex-direction: column;
+        padding: 80px 15px 15px;
+    }
+    
+    .info-section {
+        max-width: 100%;
+    }
+    
+    .section-header h2 {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .container-row {
+        flex-direction: column;
+    }
+    
+    .emergency-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-button {
+        width: 100%;
+        max-width: 100%;
+    }
+}

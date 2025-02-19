@@ -3,224 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Info - {{ name }}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            color: #2d3748;
-        }
-
-        .navbar {
-            background: linear-gradient(to right, #2c3e50, #3498db);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            text-decoration: none;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        main {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .container {
-            display: grid;
-            gap: 2rem;
-        }
-
-        section {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        h2 {
-            color: #2d3748;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        p {
-            margin-bottom: 1rem;
-            color: #4a5568;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        p:last-child {
-            margin-bottom: 0;
-        }
-
-        strong {
-            color: #2d3748;
-            min-width: 100px;
-            display: inline-block;
-        }
-
-        a {
-            color: #3498db;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-         
-
-        button {
-            background: linear-gradient(to right, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        button:hover {
-            background: linear-gradient(to right, #2980b9, #2471a3);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 640px) {
-            .navbar {
-                padding: 1rem;
-            }
-
-            .brand {
-                font-size: 1.2rem;
-            }
-
-            main {
-                margin: 1rem auto;
-            }
-
-            section {
-                padding: 1.5rem;
-            }
-
-            h2 {
-                font-size: 1.3rem;
-            }
-
-            strong {
-                min-width: 80px;
-            }
-
-            button {
-                padding: 0.8rem 1.5rem;
-            }
-        }
-    </style>
+    <title>Authorize Access</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/authorize-styles.css') }}">
 </head>
-<!-- emergency.html -->
 <body>
     <nav class="navbar">
-        <div class="navbar-container">
-            <a href="{{ url_for('home') }}" class="brand">QR Emergency Contact</a>
-            <div class="nav-links">
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('logout') }}">Logout</a>
-                {% endif %}
-            </div>
+        <div class="navbar-content">
+            <a href="#" class="navbar-brand">
+                <i class="bi bi-shield-check"></i>
+                SafePass Drive
+            </a>
+        
         </div>
     </nav>
-    
-    <div class="container">
-        <h1>Emergency Contact Information</h1>
-        
-        <div class="info-section">
-            <p>
-                <span class="info-label">Name:</span>
-                <span class="info-value">{{ name }}</span>
-            </p>
-            <p>
-                <span class="info-label">Contact:</span>
-                <span class="info-value">{{ contact }}</span>
-            </p>
-            {% if document_filename %}
-            <p>
-                <span class="info-label">Document:</span>
-                <a href="{{ url_for('download_file', filename=document_filename) }}" class="document-link">
-                    Download Emergency Document
-                </a>
-            </p>
-            {% endif %}
-        </div>
 
-        <button id="sendLocationBtn" onclick="getAndSendLocation()">
-            <span class="btn-text">Send Emergency Location</span>
-        </button>
+    <div class="main-container">
+        <!-- Personal Information Section -->
+        <div class="info-section">
+            <div class="section-header">
+                <i class="bi bi-person-fill"></i>
+                <h2>Personal Information</h2>
+            </div>
+            
+            <div class="profile-section">
+                {% if profile_pic %}
+                <div class="profile-image">
+                    <img src="{{ url_for('uploaded_file', filename=profile_pic) }}" alt="Profile Picture">
+                </div>
+                {% else %}
+                <div class="profile-image">
+                    <div class="initial-circle">
+                        <span>{{ name[0] | upper if name else 'U' }}</span>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <h3 class="profile-name">{{ name }}</h3>
+            </div>
+    
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-droplet-fill blood-icon"></i>
+                        <span>Blood Group</span>
+                    </div>
+                    <!-- Fix: Ensure this displays blood_group value, not gender -->
+                    <div class="detail-value blood-type">{{ blood_group if blood_group else 'Not specified' }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-gender-ambiguous"></i>
+                        <span>Gender</span>
+                    </div>
+                    <div class="detail-value">{{ gender }}</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-telephone-fill"></i>
+                        <span>Contact</span>
+                    </div>
+                    <div class="detail-value">{{ contact }}</div>
+                </div>
+    
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span>Email</span>
+                    </div>
+                    <div class="detail-value">{{ email }}</div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Vehicle Information Section -->
+        <div class="info-section">
+            <div class="section-header">
+                <i class="bi bi-car-front-fill"></i>
+                <h2>Vehicle Information</h2>
+            </div>
+            
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-car-front-fill"></i>
+                        <span>Vehicle Number</span>
+                    </div>
+                    <div class="detail-value">{{ vehicle_number }}</div>
+                </div>
+    
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-car-front"></i>
+                        <span>Vehicle Model</span>
+                    </div>
+                    <div class="detail-value">{{ vehicle_model }}</div>
+                </div>
+    
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-card-text"></i>
+                        <span>License Number</span>
+                    </div>
+                    <div class="detail-value">{{ license_number }}</div>
+                </div>
+    
+                <div class="detail-item">
+                    <div class="detail-label">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>License Expiry</span>
+                    </div>
+                    <div class="detail-value">{{ license_expiry }}</div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Documents Section -->
+        <div class="info-section">
+            <div class="section-header">
+                <i class="bi bi-file-earmark-text-fill"></i>
+                <h2>Documents</h2>
+            </div>
+            
+            <div class="document-grid">
+                <div class="document-item">
+                    <div class="document-icon">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <div class="document-name">License</div>
+                    <div class="document-status">Verified</div>
+                </div>
+    
+                <div class="document-item">
+                    <div class="document-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="document-name">Insurance</div>
+                    <div class="document-status">Valid</div>
+                </div>
+    
+                <div class="document-item">
+                    <div class="document-icon">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <div class="document-name">PUC Certificate</div>
+                    <div class="document-status">Active</div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Emergency Actions -->
+        <div class="emergency-actions">
+            <button class="action-button primary-action" id="sendLocationBtn">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>Share Current Location</span>
+            </button>
+            
+            <a href="tel:{{ contact }}" class="action-button secondary-action">
+                <i class="bi bi-telephone-fill"></i>
+                <span>Call Emergency Contact</span>
+            </a>
+        </div>
     </div>
 
     <script>
-        function getAndSendLocation() {
+        document.getElementById('sendLocationBtn').addEventListener('click', function() {
+            const button = this;
+            button.disabled = true;
+            button.classList.add('loading');
+            button.innerHTML = '<i class="bi bi-hourglass-split"></i><span>Getting Location...</span>';
+            
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
-                    const location = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
                     
-                    // Here you can implement the logic to send the location
-                    // For example, open in Google Maps:
-                    const mapsUrl = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
-                    window.open(mapsUrl, '_blank');
+                    button.innerHTML = '<i class="bi bi-arrow-repeat spin"></i><span>Sending Location...</span>';
+                    
+                    fetch('/send_location', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            latitude: latitude,
+                            longitude: longitude
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        showNotification('Location shared successfully with emergency services');
+                        
+                        // Reset button
+                        button.disabled = false;
+                        button.classList.remove('loading');
+                        button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        showNotification('Failed to share location', 'error');
+                        
+                        button.disabled = false;
+                        button.classList.remove('loading');
+                        button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+                    });
+                }, function() {
+                    showNotification('Unable to retrieve your location', 'error');
+                    
+                    button.disabled = false;
+                    button.classList.remove('loading');
+                    button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
                 });
             } else {
-                alert("Geolocation is not supported by this browser.");
+                showNotification('Geolocation is not supported by your browser', 'error');
+                button.disabled = false;
+                button.classList.remove('loading');
+                button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
             }
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+                </div>
+                <div class="notification-message">${message}</div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
         }
     </script>
 </body>
