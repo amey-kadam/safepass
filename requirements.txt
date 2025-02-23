@@ -6,4 +6,5 @@ db-sqlite3==0.0.1
 Werkzeug==3.0.3
 gunicorn==21.2.0
 Flask-Migrate  
-Flask-SQLAlchemy                                                          
+Flask-SQLAlchemy
+flask_mail                                                        
