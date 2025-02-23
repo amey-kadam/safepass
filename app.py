@@ -30,7 +30,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'}
 app.config['ADMIN_SESSION_KEY'] = 'admin_id'
 app.config['USER_SESSION_KEY'] = 'user_id'
 
-db.SQLAlchemy(app)
+db=SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'auth'
