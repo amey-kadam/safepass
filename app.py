@@ -15,10 +15,11 @@ from models import db, User, EmergencyContact, Admin, Police
 from flask_mail import Mail, Message
 import random
 import string
+from sqlalchemy import inspect
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///emergency_contact.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -29,8 +30,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'}
 app.config['ADMIN_SESSION_KEY'] = 'admin_id'
 app.config['USER_SESSION_KEY'] = 'user_id'
 
-# Initialize extensions
-db.init_app(app)
+db.SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'auth'
@@ -692,7 +692,6 @@ def verify_otp(unique_id):
 
 
 
-if __name__ == '__main__':
-    with app.app_context():
+with app.app_context():
+    if not inspect(db.engine).get_table_names(): 
         db.create_all()
-    app.run(debug=False)
