@@ -56,6 +56,7 @@ body {
 .main-container {
     padding-top: 90px;
     padding-bottom: 20px;
+    margin-top: 4rem;
 }
 
 .options-card {
@@ -130,6 +131,7 @@ body {
     
     .main-container {
         padding-top: 80px;
+        margin-top: 13rem;
     }
     
     .options-card {
