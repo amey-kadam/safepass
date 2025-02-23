@@ -152,6 +152,7 @@ body {
     flex-direction: column;
     gap: 15px;
     padding: 15px;
+    align-items: center; /* Center the button */
 }
 
 .document-item {

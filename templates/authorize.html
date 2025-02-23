@@ -7,6 +7,55 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/authorize-styles.css') }}">
+    <style>
+        .auth-controls {
+        display: none;
+    }
+
+        .auth-buttons {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            justify-content: center;
+        }
+
+            .verification-section {
+        padding: 20px;
+        text-align: center;
+    }
+
+        .otp-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .otp-input {
+            padding: 10px;
+            font-size: 1.2em;
+            width: 150px;
+            text-align: center;
+            letter-spacing: 3px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .timer-text {
+            color: #666;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+
+        .document-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .document-link:hover .document-item {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -15,7 +64,6 @@
                 <i class="bi bi-shield-check"></i>
                 SafePass Drive
             </a>
-        
         </div>
     </nav>
 
@@ -49,7 +97,6 @@
                         <i class="bi bi-droplet-fill blood-icon"></i>
                         <span>Blood Group</span>
                     </div>
-                    <!-- Fix: Ensure this displays blood_group value, not gender -->
                     <div class="detail-value blood-type">{{ blood_group if blood_group else 'Not specified' }}</div>
                 </div>
                 
@@ -122,39 +169,72 @@
         </div>
     
         <!-- Documents Section -->
-        <div class="info-section">
-            <div class="section-header">
-                <i class="bi bi-file-earmark-text-fill"></i>
-                <h2>Documents</h2>
-            </div>
-            
-            <div class="document-grid">
-                <div class="document-item">
-                    <div class="document-icon">
-                        <i class="bi bi-person-badge"></i>
-                    </div>
-                    <div class="document-name">License</div>
-                    <div class="document-status">Verified</div>
-                </div>
+<!-- Documents Section -->
+<div class="info-section">
+    <div class="section-header">
+        <i class="bi bi-file-earmark-text-fill"></i>
+        <h2>Documents</h2>
+    </div>
     
-                <div class="document-item">
-                    <div class="document-icon">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <div class="document-name">Insurance</div>
-                    <div class="document-status">Valid</div>
+    <!-- Documents Grid (Hidden by default) -->
+    <div id="documents-grid" class="document-grid" style="display: none;">
+        <a href="{{ url_for('uploaded_file', filename=license_doc) }}" target="_blank" class="document-link">
+            <div class="document-item">
+                <div class="document-icon">
+                    <i class="bi bi-person-badge"></i>
                 </div>
-    
-                <div class="document-item">
-                    <div class="document-icon">
-                        <i class="bi bi-file-earmark-check"></i>
-                    </div>
-                    <div class="document-name">PUC Certificate</div>
-                    <div class="document-status">Active</div>
-                </div>
+                <div class="document-name">License</div>
+                <div class="document-status">Verified</div>
             </div>
+        </a>
+
+        <a href="{{ url_for('uploaded_file', filename=insurance_doc) }}" target="_blank" class="document-link">
+            <div class="document-item">
+                <div class="document-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="document-name">Insurance</div>
+                <div class="document-status">Valid</div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('uploaded_file', filename=puc_doc) }}" target="_blank" class="document-link">
+            <div class="document-item">
+                <div class="document-icon">
+                    <i class="bi bi-file-earmark-check"></i>
+                </div>
+                <div class="document-name">PUC Certificate</div>
+                <div class="document-status">Active</div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Initial View - OTP Request Button -->
+    <div id="documents-locked" class="document-grid">
+        <button class="action-button primary-action" id="requestOtpBtn" onclick="requestOTP()">
+            <i class="bi bi-shield-lock"></i>
+            <span>Click to Get OTP</span>
+        </button>
+    </div>
+
+    <!-- OTP Verification Form (Hidden by default) -->
+    <div id="otp-verification" class="verification-section" style="display: none;">
+        <div class="otp-form">
+            <p>OTP has been sent to {{ email }}</p>
+            <input type="text" id="otpInput" placeholder="Enter OTP" maxlength="6" class="otp-input">
+            <button class="action-button primary-action" onclick="verifyOTP()">
+                <i class="bi bi-check-circle"></i>
+                <span>Verify OTP</span>
+            </button>
+            <p id="otp-timer" class="timer-text"></p>
+            <button class="action-button secondary-action" id="resendOtpBtn" onclick="requestOTP()" style="display: none;">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>Resend OTP</span>
+            </button>
         </div>
-    
+    </div>
+</div>
+
         <!-- Emergency Actions -->
         <div class="emergency-actions">
             <button class="action-button primary-action" id="sendLocationBtn">
@@ -170,6 +250,90 @@
     </div>
 
     <script>
+        let otpTimer;
+
+        function startTimer(duration) {
+            let timer = duration;
+            const timerDisplay = document.getElementById('otp-timer');
+            const resendButton = document.getElementById('resendOtpBtn');
+            
+            clearInterval(otpTimer);
+            
+            otpTimer = setInterval(function() {
+                const minutes = parseInt(timer / 60, 10);
+                const seconds = parseInt(timer % 60, 10);
+                
+                timerDisplay.textContent = `Resend OTP in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                
+                if (--timer < 0) {
+                    clearInterval(otpTimer);
+                    timerDisplay.textContent = '';
+                    resendButton.style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        function requestOTP() {
+            const requestOtpBtn = document.getElementById('requestOtpBtn');
+            requestOtpBtn.disabled = true;
+            
+            // Get unique_id from URL
+            const uniqueId = window.location.pathname.split('/').pop();
+            
+            fetch(`/send-otp/${uniqueId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('documents-locked').style.display = 'none';
+                    document.getElementById('otp-verification').style.display = 'block';
+                    document.getElementById('resendOtpBtn').style.display = 'none';
+                    startTimer(180); // 3 minutes timer
+                    showNotification('OTP sent successfully', 'success');
+                } else {
+                    showNotification('Failed to send OTP', 'error');
+                    requestOtpBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                showNotification('Error sending OTP', 'error');
+                requestOtpBtn.disabled = false;
+            });
+        }
+
+        function verifyOTP() {
+            const otp = document.getElementById('otpInput').value;
+            const uniqueId = window.location.pathname.split('/').pop();
+            
+            fetch(`/verify-otp/${uniqueId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    otp: otp
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('otp-verification').style.display = 'none';
+                    document.getElementById('documents-grid').style.display = 'grid';
+                    showNotification('Documents unlocked successfully', 'success');
+                    clearInterval(otpTimer);
+                } else {
+                    showNotification('Invalid OTP', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Error verifying OTP', 'error');
+            });
+        }
+
         document.getElementById('sendLocationBtn').addEventListener('click', function() {
             const button = this;
             button.disabled = true;
@@ -230,7 +394,7 @@
             notification.className = `notification ${type}`;
             notification.innerHTML = `
                 <div class="notification-icon">
-                    <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+<i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
                 </div>
                 <div class="notification-message">${message}</div>
             `;
@@ -248,5 +412,61 @@
             }, 3000);
         }
     </script>
+
+    <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification-icon {
+            font-size: 1.2rem;
+        }
+
+        .notification.success .notification-icon {
+            color: #28a745;
+        }
+
+        .notification.error .notification-icon {
+            color: #dc3545;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .bi-arrow-repeat.spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
 </body>
 </html>

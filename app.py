@@ -12,6 +12,10 @@ from flask import session
 from io import BytesIO
 from flask import send_file
 from models import db, User, EmergencyContact, Admin, Police
+from flask_mail import Mail, Message
+import random
+import string
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///emergency_contact.db'
@@ -325,7 +329,7 @@ def scan_result(unique_id):
 def authorize(unique_id):
     contact = EmergencyContact.query.filter_by(unique_id=unique_id).first_or_404()
     
-    # Initialize default values
+    
     contact_data = {
         'personal': {},
         'vehicle': {},
@@ -340,11 +344,16 @@ def authorize(unique_id):
     except Exception as e:
         print(f"Error parsing contact data: {str(e)}")
 
-    # Extract data with fallbacks
+
     personal = contact_data.get('personal', {})
     vehicle = contact_data.get('vehicle', {})
     license_info = contact_data.get('license', {})
     documents = contact_data.get('documents', {})
+
+    
+    license_doc = documents.get('driving_license') 
+    insurance_doc = documents.get('insurance_policy')  
+    puc_doc = documents.get('puc_certificate') 
 
     return render_template('authorize.html',
                          name=personal.get('name', contact.name),
@@ -357,7 +366,9 @@ def authorize(unique_id):
                          license_number=license_info.get('number', ''),
                          license_expiry=license_info.get('expiry', ''),
                          profile_pic=documents.get('profile_picture'),
-                         # Add other necessary fields below
+                         license_doc=license_doc,  
+                         insurance_doc=insurance_doc, 
+                         puc_doc=puc_doc 
                          )
 
 
@@ -609,6 +620,76 @@ def internal_error(error):
     return render_template('error.html',
                          error_code=500,
                          error_message="Internal server error"), 500
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'kamey2312@gmail.com'  # Replace with your email
+app.config['MAIL_PASSWORD'] = 'pmkd stcj wowf vbcc'     # Replace with your app password
+mail = Mail(app)
+
+# Store OTPs temporarily (in production, use Redis or similar)
+otp_store = {}
+
+def generate_otp():
+    return ''.join(random.choices(string.digits, k=6))
+
+@app.route('/send-otp/<unique_id>', methods=['POST'])
+def send_otp(unique_id):
+    try:
+        # Get contact info from database
+        contact = EmergencyContact.query.filter_by(unique_id=unique_id).first_or_404()
+        
+        # Get email from contact's additional data
+        try:
+            import json
+            data = json.loads(contact.additional_data)
+            email = data.get('personal', {}).get('email')
+            
+            if not email:
+                return jsonify({'success': False, 'message': 'Email not found'}), 400
+            
+            otp = generate_otp()
+            otp_store[unique_id] = otp
+            
+            # Send email
+            msg = Message('Document Access OTP',
+                         sender=app.config['MAIL_USERNAME'],
+                         recipients=[email])
+            msg.body = f'Your OTP for accessing documents is: {otp}\nThis OTP will expire in 3 minutes.'
+            mail.send(msg)
+            
+            return jsonify({'success': True, 'message': 'OTP sent successfully'})
+        except Exception as e:
+            return jsonify({'success': False, 'message': f'Error processing contact data: {str(e)}'}), 500
+            
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/verify-otp/<unique_id>', methods=['POST'])
+def verify_otp(unique_id):
+    try:
+        data = request.get_json()
+        otp = data.get('otp')
+        
+        if not otp:
+            return jsonify({'success': False, 'message': 'OTP is required'}), 400
+        
+        stored_otp = otp_store.get(unique_id)
+        
+        if not stored_otp:
+            return jsonify({'success': False, 'message': 'OTP expired'}), 400
+        
+        if otp == stored_otp:
+            # Clear the OTP after successful verification
+            del otp_store[unique_id]
+            return jsonify({'success': True, 'message': 'OTP verified successfully'})
+        
+        return jsonify({'success': False, 'message': 'Invalid OTP'}), 400
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
 
 
 if __name__ == '__main__':
