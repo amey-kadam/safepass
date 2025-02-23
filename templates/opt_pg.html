@@ -20,18 +20,22 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="main-container">
-        <div class="options-card">
-            <h1 class="options-title">Choose an Option</h1>
-            <div class="options-grid">
-                <a href="{{ url_for('police_login', unique_id=unique_id) }}" class="option-button authorize-btn">
-                    <i class="bi bi-person-check"></i>
-                    Authorize
-                </a>
-                <a href="{{ url_for('emergency', unique_id=unique_id) }}" class="option-button emergency-btn">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    Emergency
-                </a>
+    <div class="container main-container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="options-card">
+                    <h1 class="options-title">Choose an Option</h1>
+                    <div class="options-grid">
+                        <a href="{{ url_for('police_login', unique_id=unique_id) }}" class="option-button authorize-btn">
+                            <i class="bi bi-person-check"></i>
+                            Authorize
+                        </a>
+                        <a href="{{ url_for('emergency', unique_id=unique_id) }}" class="option-button emergency-btn">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Emergency
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
