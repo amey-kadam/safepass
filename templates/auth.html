@@ -129,6 +129,52 @@
         left: 0;
     }
 
+    /* Notification Styles */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    .notification.success {
+        border-left: 4px solid #28a745;
+    }
+
+    .notification.error {
+        border-left: 4px solid #dc3545;
+    }
+
+    .notification-icon {
+        font-size: 1.2rem;
+    }
+
+    .notification.success .notification-icon {
+        color: #28a745;
+    }
+
+    .notification.error .notification-icon {
+        color: #dc3545;
+    }
+
+    .notification-message {
+        font-size: 0.9rem;
+        color: #333;
+    }
+
     @media (max-width: 768px) {
         .container {
             flex-direction: column;
@@ -208,17 +254,97 @@
 
 {% block extra_js %}
 <script>
-    document.querySelectorAll('.toggle-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const container = document.querySelector('.container');
-            if (container.classList.contains('signup-active')) {
-                container.classList.remove('signup-active');
-                container.classList.add('login-active');
-            } else {
-                container.classList.remove('login-active');
-                container.classList.add('signup-active');
+    var flashed_messages = [
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {
+                        message: {{ message|tojson }},
+                        category: {{ category|tojson }}
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    ];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle toggle between signup and login forms
+        document.querySelectorAll('.toggle-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const container = document.querySelector('.container');
+                if (container.classList.contains('signup-active')) {
+                    container.classList.remove('signup-active');
+                    container.classList.add('login-active');
+                } else {
+                    container.classList.remove('login-active');
+                    container.classList.add('signup-active');
+                }
+            });
+        });
+
+        // Process any flash messages
+        if (flashed_messages.length > 0) {
+            for (let i = 0; i < flashed_messages.length; i++) {
+                showNotification(flashed_messages[i].message, flashed_messages[i].category);
             }
+        }
+
+        // Form validation remains the same
+        document.querySelector('.login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            this.submit();
+        });
+
+        document.querySelector('.signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (!email || !password || !confirmPassword) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            this.submit();
         });
     });
+
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+            </div>
+            <div class="notification-message">${message}</div>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
 </script>
 {% endblock %}
