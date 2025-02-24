@@ -2,15 +2,59 @@
 
 {% block extra_css %}
 <style>
- /* Modern Admin Dashboard Styling */
+    /* Notification Styles */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transform: translateX(120%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
 
-/* General Styles */
-body {
-    font-family: 'Roboto', 'Segoe UI', sans-serif;
-    background-color: #f5f7fa;
-    margin: 0;
-    color: #333;
-}
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    .notification.success {
+        border-left: 4px solid #28a745;
+    }
+
+    .notification.error {
+        border-left: 4px solid #dc3545;
+    }
+
+    .notification-icon {
+        font-size: 1.2rem;
+    }
+
+    .notification.success .notification-icon {
+        color: #28a745;
+    }
+
+    .notification.error .notification-icon {
+        color: #dc3545;
+    }
+
+    .notification-message {
+        font-size: 0.9rem;
+        color: #333;
+    }
+
+    /* Rest of your existing admin styles */
+    body {
+        font-family: 'Roboto', 'Segoe UI', sans-serif;
+        background-color: #f5f7fa;
+        margin: 0;
+        color: #333;
+    }
 
 /* Container */
 .container {
@@ -386,17 +430,65 @@ p.text-gray-600 {
     </div>
 </div>
 
+{% block extra_js %}
 <script>
-function showDenyForm(contactId) {
-    const modal = document.getElementById('denyModal');
-    const form = document.getElementById('denyForm');
-    modal.classList.remove('hidden');
-    form.action = `/admin/deny/${contactId}`;
-}
+    // Convert Flask's flash messages to JavaScript variable
+    var flashed_messages = [
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {
+                        message: {{ message|tojson }},
+                        category: {{ category|tojson }}
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    ];
 
-function hideDenyForm() {
-    const modal = document.getElementById('denyModal');
-    modal.classList.add('hidden');
-}
+    document.addEventListener('DOMContentLoaded', function() {
+        // Process any flash messages
+        if (flashed_messages.length > 0) {
+            for (let i = 0; i < flashed_messages.length; i++) {
+                showNotification(flashed_messages[i].message, flashed_messages[i].category);
+            }
+        }
+    });
+
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+            </div>
+            <div class="notification-message">${message}</div>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+
+    // Keep existing modal functions
+    function showDenyForm(contactId) {
+        const modal = document.getElementById('denyModal');
+        const form = document.getElementById('denyForm');
+        modal.classList.remove('hidden');
+        form.action = `/admin/deny/${contactId}`;
+    }
+
+    function hideDenyForm() {
+        const modal = document.getElementById('denyModal');
+        modal.classList.add('hidden');
+    }
 </script>
 {% endblock %}
