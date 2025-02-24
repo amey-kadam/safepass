@@ -353,16 +353,8 @@ p.text-gray-600 {
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
     
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} mb-4">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-    
+  
     <div class="bg-white shadow rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4">Pending Approvals</h2>
         
         {% if pending_contacts %}
             <div class="overflow-x-auto">
@@ -431,16 +423,62 @@ p.text-gray-600 {
 </div>
 
 <script>
-function showDenyForm(contactId) {
-    const modal = document.getElementById('denyModal');
-    const form = document.getElementById('denyForm');
-    modal.classList.remove('hidden');
-    form.action = `/admin/deny/${contactId}`;
-}
-
-function hideDenyForm() {
-    const modal = document.getElementById('denyModal');
-    modal.classList.add('hidden');
-}
-</script>
+    // Process flash messages from server
+    var flashed_messages = [
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {
+                        message: {{ message|tojson }},
+                        category: {{ category|tojson }}
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    ];
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show any flash messages
+        if (flashed_messages.length > 0) {
+            for (let i = 0; i < flashed_messages.length; i++) {
+                showNotification(flashed_messages[i].message, flashed_messages[i].category);
+            }
+        }
+    });
+    
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-icon">
+                <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+            </div>
+            <div class="notification-message">${message}</div>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+    
+    function showDenyForm(contactId) {
+        const modal = document.getElementById('denyModal');
+        const form = document.getElementById('denyForm');
+        modal.classList.remove('hidden');
+        form.action = `/admin/deny/${contactId}`;
+    }
+    
+    function hideDenyForm() {
+        const modal = document.getElementById('denyModal');
+        modal.classList.add('hidden');
+    }
+    </script>
 {% endblock %}
