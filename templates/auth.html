@@ -4,8 +4,6 @@
 
 {% block header_title %}SafePass Drive{% endblock %}
 
-
-
 {% block extra_css %}
 <style>
     .container {
@@ -32,7 +30,9 @@
     }
 
     .signup-form,
-    .login-form {
+    .login-form,
+    .forgot-password-form,
+    .verify-otp-form {
         display: none;
         flex-direction: column;
         align-items: center;
@@ -41,12 +41,16 @@
     }
 
     .signup-active .signup-form,
-    .login-active .login-form {
+    .login-active .login-form,
+    .forgot-password-active .forgot-password-form,
+    .verify-otp-active .verify-otp-form {
         display: flex;
     }
 
     .signup-form h2,
-    .login-form h2 {
+    .login-form h2,
+    .forgot-password-form h2,
+    .verify-otp-form h2 {
         margin-bottom: 30px;
         color: #333;
         text-align: center;
@@ -54,7 +58,9 @@
     }
 
     .signup-form input,
-    .login-form input {
+    .login-form input,
+    .forgot-password-form input,
+    .verify-otp-form input {
         margin: 8px 0;
         padding: 12px 15px;
         border-radius: 5px;
@@ -65,7 +71,9 @@
     }
 
     .signup-form button,
-    .login-form button {
+    .login-form button,
+    .forgot-password-form button,
+    .verify-otp-form button {
         width: 100%;
         max-width: 320px;
         padding: 12px;
@@ -80,18 +88,20 @@
     }
 
     .signup-form button:hover,
-    .login-form button:hover {
+    .login-form button:hover,
+    .forgot-password-form button:hover,
+    .verify-otp-form button:hover {
         background-color: #2980b9;
     }
 
-    .toggle-btn {
+    .toggle-btn, .forgot-password-btn, .back-to-login-btn {
         background-color: transparent !important;
         color: #3498db !important;
         border: 1px solid #3498db !important;
         margin-top: 15px !important;
     }
 
-    .toggle-btn:hover {
+    .toggle-btn:hover, .forgot-password-btn:hover, .back-to-login-btn:hover {
         background-color: #f8f9fa !important;
     }
 
@@ -113,7 +123,9 @@
         object-fit: cover;
     }
 
-    .signup-active .form-container {
+    .signup-active .form-container,
+    .forgot-password-active .form-container,
+    .verify-otp-active .form-container {
         left: 0;
     }
 
@@ -121,12 +133,31 @@
         left: 50%;
     }
 
-    .signup-active .image-container {
+    .signup-active .image-container,
+    .forgot-password-active .image-container,
+    .verify-otp-active .image-container {
         left: 50%;
     }
 
     .login-active .image-container {
         left: 0;
+    }
+
+    /* OTP input styling */
+    .otp-inputs {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin: 16px 0;
+    }
+
+    .otp-inputs input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 20px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
     }
 
     /* Notification Styles */
@@ -196,33 +227,53 @@
         }
 
         .signup-form,
-        .login-form {
+        .login-form,
+        .forgot-password-form,
+        .verify-otp-form {
             width: 100%;
             padding: 0 20px;
         }
 
         .signup-form input,
         .login-form input,
+        .forgot-password-form input,
+        .verify-otp-form input,
         .signup-form button,
-        .login-form button {
+        .login-form button,
+        .forgot-password-form button,
+        .verify-otp-form button {
             max-width: 100%;
         }
 
         .signup-active .form-container,
-        .login-active .form-container {
+        .login-active .form-container,
+        .forgot-password-active .form-container,
+        .verify-otp-active .form-container {
             left: 0;
         }
 
         .signup-active .image-container,
-        .login-active .image-container {
+        .login-active .image-container,
+        .forgot-password-active .image-container,
+        .verify-otp-active .image-container {
             left: 0;
+        }
+
+        .otp-inputs {
+            gap: 4px;
+        }
+
+        .otp-inputs input {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container signup-active">
+<div class="container login-active">
     <div class="form-container">
         <!-- Login Form -->
         <form class="login-form" method="POST" action="{{ url_for('auth', user_id=request.args.get('user_id')) }}">
@@ -231,6 +282,7 @@
             <input type="email" id="login-email" name="email" placeholder="Email" required>
             <input type="password" id="login-password" name="password" placeholder="Password" required>
             <button type="submit">Login</button>
+            <button type="button" class="forgot-password-btn">Forgot Password?</button>
             <button type="button" class="toggle-btn">Don't have an account? Sign Up</button>
         </form>
 
@@ -239,10 +291,41 @@
             <h2>Sign Up</h2>
             <input type="hidden" name="action" value="signup">
             <input type="email" id="signup-email" name="email" placeholder="Email" required>
-            <input type="password" id="signup-password" name="password" placeholder="Password" required>
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+          <!-- Only in signup form -->
+            <input type="password" id="signup-password" name="password" placeholder="Password" pattern=".{8,}" title="Password must be at least 8 characters" required>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" pattern=".{8,}" title="Password must be at least 8 characters" required>
             <button type="submit">Sign Up</button>
             <button type="button" class="toggle-btn">Already have an account? Login</button>
+        </form>
+
+        <!-- Forgot Password Form -->
+        <form class="forgot-password-form" method="POST" action="{{ url_for('forgot_password') }}">
+            <h2>Forgot Password</h2>
+            <input type="hidden" name="action" value="forgot_password">
+            <input type="email" id="forgot-email" name="email" placeholder="Enter your email" required>
+            <button type="submit">Send OTP</button>
+            <button type="button" class="back-to-login-btn">Back to Login</button>
+        </form>
+
+        <!-- Verify OTP Form -->
+<!-- Verify OTP Form -->
+        <form class="verify-otp-form" method="POST" action="{{ url_for('verify_reset_otp') }}">
+            <h2>Verify OTP</h2>
+            <input type="hidden" name="action" value="verify_otp">
+            <input type="hidden" id="otp-email" name="email">
+            <p>Enter the 6-digit code sent to your email</p>
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" name="otp1" pattern="[0-9]" inputmode="numeric" required autofocus>
+                <input type="text" maxlength="1" name="otp2" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" name="otp3" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" name="otp4" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" name="otp5" pattern="[0-9]" inputmode="numeric" required>
+                <input type="text" maxlength="1" name="otp6" pattern="[0-9]" inputmode="numeric" required>
+            </div>
+            <input type="password" id="new-password" name="new_password" placeholder="New Password" required>
+            <input type="password" id="confirm-new-password" name="confirm_new_password" placeholder="Confirm New Password" required>
+            <button type="submit">Reset Password</button>
+            <button type="button" class="back-to-login-btn">Back to Login</button>
         </form>
     </div>
 
@@ -255,7 +338,6 @@
 {% block extra_js %}
 <script>
     var flashed_messages = [
-        
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -269,82 +351,197 @@
     ];
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Handle toggle between signup and login forms
-        document.querySelectorAll('.toggle-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const container = document.querySelector('.container');
-                if (container.classList.contains('signup-active')) {
-                    container.classList.remove('signup-active');
-                    container.classList.add('login-active');
-                } else {
-                    container.classList.remove('login-active');
-                    container.classList.add('signup-active');
+    const container = document.querySelector('.container');
+    
+    var flashed_messages = [
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {
+                        message: {{ message|tojson }},
+                        category: {{ category|tojson }}
+                    }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    ];
+    
+    // Handle toggle between signup and login forms
+    document.querySelectorAll('.toggle-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            if (container.classList.contains('signup-active')) {
+                container.classList.remove('signup-active');
+                container.classList.add('login-active');
+            } else {
+                container.classList.remove('login-active');
+                container.classList.add('signup-active');
+            }
+        });
+    });
+
+    // Handle forgot password button
+    document.querySelector('.forgot-password-btn').addEventListener('click', function() {
+        container.classList.remove('login-active');
+        container.classList.add('forgot-password-active');
+    });
+
+    // Handle back to login buttons
+    document.querySelectorAll('.back-to-login-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            container.classList.remove('forgot-password-active', 'verify-otp-active');
+            container.classList.add('login-active');
+        });
+    });
+
+    // OTP input handling - move to next input after typing
+    const otpInputs = document.querySelectorAll('.otp-inputs input');
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function() {
+            if (this.value.length === this.maxLength) {
+                if (index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
                 }
-            });
+            }
         });
 
-        // Process any flash messages
-        if (flashed_messages.length > 0) {
-            for (let i = 0; i < flashed_messages.length; i++) {
-                showNotification(flashed_messages[i].message, flashed_messages[i].category);
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                otpInputs[index - 1].focus();
             }
+        });
+    });
+
+    // Form submissions
+    document.querySelector('.forgot-password-form').addEventListener('submit', function(e) {
+        const email = document.getElementById('forgot-email').value;
+        
+        if (!email) {
+            e.preventDefault();
+            showNotification('Please enter your email address', 'error');
+            return false;
         }
+        
+        // Let the form submit to the server
+        return true;
+    });
 
-        // Form validation remains the same
-        document.querySelector('.login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            
-            if (!email || !password) {
-                showNotification('Please fill in all fields', 'error');
-                return;
+    document.querySelector('.verify-otp-form').addEventListener('submit', function(e) {
+        // Validate all OTP digits are filled
+        let otp = '';
+        let allFilled = true;
+        
+        otpInputs.forEach(input => {
+            if (!input.value) {
+                allFilled = false;
             }
-            
-            this.submit();
+            otp += input.value;
         });
-
-        document.querySelector('.signup-form').addEventListener('submit', function(e) {
+        
+        if (!allFilled) {
             e.preventDefault();
+            showNotification('Please enter all OTP digits', 'error');
+            return false;
+        }
+        
+        // Validate new password fields
+        const newPassword = document.getElementById('new-password').value;
+        const confirmNewPassword = document.getElementById('confirm-new-password').value;
+        
+        if (!newPassword || !confirmNewPassword) {
+            e.preventDefault();
+            showNotification('Please enter and confirm your new password', 'error');
+            return false;
+        }
+        
+        if (newPassword !== confirmNewPassword) {
+            e.preventDefault();
+            showNotification('New passwords do not match', 'error');
+            return false;
+        }
+        
+        // Let the form submit to the server
+        return true;
+    });
+
+    // Existing login form validation
+    document.querySelector('.login-form').addEventListener('submit', function(e) {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        
+        if (!email || !password) {
+            e.preventDefault();
+            showNotification('Please fill in all fields', 'error');
+            return false;
+        }
+        
+        return true;
+    });
+
+    // Existing signup form validation
+// Update only the signup form validation
+        document.querySelector('.signup-form').addEventListener('submit', function(e) {
             const email = document.getElementById('signup-email').value;
             const password = document.getElementById('signup-password').value;
             const confirmPassword = document.getElementById('confirm_password').value;
             
             if (!email || !password || !confirmPassword) {
+                e.preventDefault();
                 showNotification('Please fill in all fields', 'error');
-                return;
+                return false;
+            }
+            
+            if (password.length < 8) {
+                e.preventDefault();
+                showNotification('Password must be at least 8 characters long', 'error');
+                return false;
             }
             
             if (password !== confirmPassword) {
+                e.preventDefault();
                 showNotification('Passwords do not match', 'error');
-                return;
+                return false;
             }
             
-            this.submit();
+            return true;
         });
-    });
 
-    function showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <div class="notification-icon">
-                <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
-            </div>
-            <div class="notification-message">${message}</div>
-        `;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10);
-        
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 3000);
+    // Process any flash messages
+    if (flashed_messages.length > 0) {
+        for (let i = 0; i < flashed_messages.length; i++) {
+            showNotification(flashed_messages[i].message, flashed_messages[i].category);
+        }
     }
+    
+    // Check for URL parameters to show OTP verification form
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('show_otp')) {
+        container.classList.remove('login-active', 'signup-active', 'forgot-password-active');
+        container.classList.add('verify-otp-active');
+        document.getElementById('otp-email').value = urlParams.get('email');
+    }
+});
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+        </div>
+        <div class="notification-message">${message}</div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
 </script>
 {% endblock %}
