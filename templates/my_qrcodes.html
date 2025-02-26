@@ -214,9 +214,7 @@
                     </div>
                     <h3>{{ contact.name }}</h3>
                     <p><strong>Contact:</strong> {{ contact.contact }}</p>
-                    {% if contact.document_path %}
-                    <p><strong>Document:</strong> {{ contact.document_path.split('/')[-1] }}</p>
-                    {% endif %}
+                   
                     {% if contact.status == 'denied' and contact.admin_comment %}
                     <div class="admin-comment">
                         <strong>Admin Comment:</strong><br>
