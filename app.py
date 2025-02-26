@@ -238,6 +238,17 @@ def auth():
             flash('Invalid email or password', 'error')
         
         elif action == 'signup':
+            # Check password length - added validation here
+            if len(password) < 8:
+                flash('Password must be at least 8 characters long', 'error')
+                return redirect(url_for('auth'))
+                
+            # Check if passwords match
+            confirm_password = request.form.get('confirm_password')
+            if password != confirm_password:
+                flash('Passwords do not match', 'error')
+                return redirect(url_for('auth'))
+                
             if User.query.filter_by(email=email).first():
                 flash('Email already exists', 'error')
                 return redirect(url_for('auth'))
@@ -250,6 +261,73 @@ def auth():
             return redirect(url_for('choice'))
 
     return render_template('auth.html')
+
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash('No account found with this email', 'error')
+            return redirect(url_for('auth'))
+
+        # Generate and store OTP
+        otp = generate_otp()
+        otp_store[email] = otp
+
+        # Debugging: Print OTP and email
+        print(f"Generated OTP: {otp} for email: {email}")
+
+        # Send OTP via email
+        try:
+            msg = Message('Password Reset OTP',
+                          sender=app.config['MAIL_USERNAME'],
+                          recipients=[email])
+            msg.body = f'Your OTP is: {otp} (valid for 3 minutes)'
+            mail.send(msg)
+            flash('OTP sent to your email', 'success')
+        except Exception as e:
+            flash('Failed to send OTP. Try again.', 'error')
+            print(f"Email error: {str(e)}")
+
+        return redirect(url_for('auth', show_otp=True, email=email))
+
+@app.route('/verify-reset-otp', methods=['POST'])
+def verify_reset_otp():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        otp1 = request.form.get('otp1')
+        otp2 = request.form.get('otp2')
+        otp3 = request.form.get('otp3')
+        otp4 = request.form.get('otp4')
+        otp5 = request.form.get('otp5')
+        otp6 = request.form.get('otp6')
+        
+        # Combine the OTP digits
+        submitted_otp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6
+        
+        # Check if the OTP matches
+        if email in otp_store and otp_store[email] == submitted_otp:
+            new_password = request.form.get('new_password')
+            
+            # Update the user's password
+            user = User.query.filter_by(email=email).first()
+            if user:
+                user.set_password(new_password)
+                db.session.commit()
+                
+                # Clear the OTP
+                del otp_store[email]
+                
+                flash('Password reset successfully', 'success')
+                return redirect(url_for('auth'))
+        
+        flash('Invalid OTP. Please try again', 'error')
+        return redirect(url_for('auth'))
+    
+    return redirect(url_for('auth'))
+
 
 @app.route('/police/login/<unique_id>', methods=['GET', 'POST'])
 def police_login(unique_id):
