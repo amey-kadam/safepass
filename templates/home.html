@@ -1,26 +1,36 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Guardian - Your Choice</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 
-{% block title %}SafePass Drive {% endblock %}
 
-{% block header_title %}SafePass Drive {% endblock %}
+<body>
 
-{% block header_button %}
-<a href="{{ url_for('logout') }}" class="nav-button">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/>
-        <line x1="21" y1="12" x2="9" y2="12"/>
-    </svg>
-    Logout
-</a>
-{% endblock %}
+        <!-- Navbar - Same as landing page -->
+        <nav class="bg-gray-800 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-20 items-center">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-shield-alt text-blue-500 text-2xl"></i>
+                        <span class="font-bold text-xl text-white">SafePass Drive</span>
+                    </div>
+                    <div class="flex items-center space-x-8">
+                        <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full font-medium transition flex items-center space-x-2">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-
-{% endblock %}
-
-{% block content %}
+        
 <div class="container">
     <div class="form-card">
         <form method="post" action="{{ url_for('generate_qr') }}" enctype="multipart/form-data">
@@ -291,9 +301,7 @@
         </form>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
  document.querySelector('form').addEventListener('submit', function(e) {
     // Prevent multiple submissions
@@ -453,7 +461,6 @@ document.querySelector('form').addEventListener('submit', function(e) {
         currentAddressInput.classList.add('error');
     }
     
-    // Prevent form submission if validation fails
     if (!isValid) {
         e.preventDefault();
         alert('Please fix the following errors:\n' + errorMessages.join('\n'));
@@ -481,7 +488,6 @@ document.querySelector('form').addEventListener('submit', function(e) {
     }
 });
 
-// Add CSS for error highlighting
 const style = document.createElement('style');
 style.textContent = `
     .error {
@@ -492,4 +498,6 @@ style.textContent = `
 document.head.appendChild(style);
 
 </script>
-{% endblock %}
+
+</body>
+</html>

@@ -1,40 +1,393 @@
-<!-- templates/admin_login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>SafePass Drive - Admin Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #f9fafb; /* text-gray-100 */
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3B4FD8 0%, #00C6FF 100%);
+        }
+        
+        .secondary-gradient {
+            background: linear-gradient(135deg, #00C6FF 0%, #0072FF 100%);
+        }
+        
+        .auth-container {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            min-height: 600px;
+            background-color: #1f2937; /* bg-gray-800 */
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            margin: 3rem auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-container {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        .form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80%;
+            max-width: 400px;
+        }
+        
+        .form h2 {
+            margin-bottom: 2rem;
+            color: #f9fafb;
+            text-align: center;
+            width: 100%;
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+        
+        .form input {
+            margin: 0.5rem 0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 320px;
+            font-size: 0.875rem;
+            background-color: #374151; /* bg-gray-700 */
+            color: #f9fafb;
+            transition: all 0.3s ease;
+        }
+        
+        .form input:focus {
+            outline: none;
+            border-color: #3B82F6; /* blue-500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .form input::placeholder {
+            color: #9CA3AF; /* gray-400 */
+        }
+        
+        .form button {
+            width: 100%;
+            max-width: 320px;
+            padding: 0.75rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 9999px;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, #3B4FD8 0%, #00C6FF 100%);
+            color: #fff;
+            transform: translateY(0);
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .secondary-btn {
+            background-color: transparent;
+            color: #f9fafb;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 1rem;
+        }
+        
+        .secondary-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .image-container {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            left: 0;
+            background: linear-gradient(135deg, #3B4FD8 0%, #00C6FF 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .image-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            color: white;
+        }
+        
+        .image-content img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 4px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .image-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .image-content p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            max-width: 300px;
+        }
+        
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #1f2937; /* bg-gray-800 */
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid #10B981; /* emerald-500 */
+        }
+        
+        .notification.error {
+            border-left: 4px solid #EF4444; /* red-500 */
+        }
+        
+        .notification-icon {
+            font-size: 1.2rem;
+        }
+        
+        .notification.success .notification-icon {
+            color: #10B981; /* emerald-500 */
+        }
+        
+        .notification.error .notification-icon {
+            color: #EF4444; /* red-500 */
+        }
+        
+        .notification-message {
+            font-size: 0.9rem;
+            color: #f9fafb;
+        }
+        
+        /* Landing page navbar styles */
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(90deg, #3B4FD8, #00C6FF);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .glow-button {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(0, 198, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(0, 198, 255, 0.8), 0 0 30px rgba(0, 198, 255, 0.6);
+            }
+        }
+        
+        /* Animated background */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .bg-animation .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                min-height: 800px;
+                width: 90%;
+                margin: 2rem auto;
+            }
+            
+            .form-container, .image-container {
+                position: relative;
+                width: 100%;
+                height: 50%;
+                left: 0 !important;
+            }
+            
+            .image-container {
+                min-height: 250px;
+            }
+            
+            .form-container {
+                padding: 2rem 1rem;
+            }
+            
+            .form {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-center">Admin Login</h3>
-                    </div>
-                    <div class="card-body">
-                     
-
-                        <form method="POST" action="{{ url_for('admin_login') }}">
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Login</button>
-                            </div>
-                        </form>
-                    </div>
+    <!-- Navbar - Same as auth.html -->
+    <nav class="bg-gray-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-shield-alt text-blue-500 text-2xl"></i>
+                    <span class="font-bold text-xl text-white">SafePass Drive</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="{{ url_for('admin_login') }}" class="nav-link text-gray-300 hover:text-white">Admin Login</a>
+                    <a href="{{ url_for('home') }}#features" class="nav-link text-gray-300 hover:text-white">Features</a>
+                    <a href="{{ url_for('home') }}#how-it-works" class="nav-link text-gray-300 hover:text-white">How It Works</a>
+                    <a href="{{ url_for('home') }}#use-cases" class="nav-link text-gray-300 hover:text-white">Use Cases</a>
+                    <a href="{{ url_for('auth') }}" class="gradient-bg text-white px-5 py-2 rounded-full font-medium hover:opacity-90 transition glow-button">Get Started</a>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="auth-container">
+        <div class="image-container">
+            <div class="bg-animation">
+                <!-- Animated background bubbles -->
+                <div class="bubble" style="width: 100px; height: 100px; left: 10%; top: 20%; animation-delay: 0s;"></div>
+                <div class="bubble" style="width: 150px; height: 150px; right: 20%; top: 40%; animation-delay: 2s;"></div>
+                <div class="bubble" style="width: 80px; height: 80px; left: 30%; bottom: 30%; animation-delay: 4s;"></div>
+                <div class="bubble" style="width: 120px; height: 120px; right: 30%; bottom: 10%; animation-delay: 1s;"></div>
+            </div>
+            <div class="image-content">
+                <img src="{{ url_for('static', filename='images/safelink.png') }}" alt="SafePass Drive">
+                <h3>Admin Portal</h3>
+                <p>Manage your organization's emergency response system with advanced analytics and controls.</p>
+            </div>
+        </div>
+        
+        <div class="form-container" style="left: 50%;">
+            <!-- Admin Login Form -->
+            <form class="form" method="POST" action="{{ url_for('admin_login') }}">
+                <h2>Admin Login</h2>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <button type="submit" class="primary-btn">Login</button>
+                <a href="{{ url_for('home') }}" class="secondary-btn">Back to Home</a>
+            </form>
+        </div>
     </div>
+
+    <script>
+        var flashed_messages = [
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {
+                            message: {{ message|tojson }},
+                            category: {{ category|tojson }}
+                        }{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Process any flash messages
+            if (flashed_messages.length > 0) {
+                for (let i = 0; i < flashed_messages.length; i++) {
+                    showNotification(flashed_messages[i].message, flashed_messages[i].category);
+                }
+            }
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                </div>
+                <div class="notification-message">${message}</div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
