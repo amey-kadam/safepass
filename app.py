@@ -72,6 +72,20 @@ def before_request():
 def home():
     return render_template('landing.html')
 
+
+
+@app.template_filter('get_documents_from_json')
+def get_documents_from_json(json_data):
+    """Extract document information from JSON data"""
+    try:
+        import json
+        data = json.loads(json_data)
+        return data.get('documents', {})
+    except Exception as e:
+        print(f"Error parsing JSON data: {str(e)}")
+        return {}
+    
+    
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -261,6 +275,11 @@ def auth():
             return redirect(url_for('choice'))
 
     return render_template('auth.html')
+
+
+
+
+    
 
 @app.route('/forgot-password', methods=['POST'])
 def forgot_password():
