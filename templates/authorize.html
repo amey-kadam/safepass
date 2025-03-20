@@ -250,167 +250,184 @@
     </div>
 
     <script>
-        let otpTimer;
+// OTP Timer functionality
+let otpTimer;
 
-        function startTimer(duration) {
-            let timer = duration;
-            const timerDisplay = document.getElementById('otp-timer');
-            const resendButton = document.getElementById('resendOtpBtn');
-            
+function startTimer(duration) {
+    let timer = duration;
+    const timerDisplay = document.getElementById('otp-timer');
+    const resendButton = document.getElementById('resendOtpBtn');
+    
+    clearInterval(otpTimer);
+    
+    otpTimer = setInterval(function() {
+        const minutes = parseInt(timer / 60, 10);
+        const seconds = parseInt(timer % 60, 10);
+        
+        timerDisplay.textContent = `Resend OTP in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        
+        if (--timer < 0) {
             clearInterval(otpTimer);
-            
-            otpTimer = setInterval(function() {
-                const minutes = parseInt(timer / 60, 10);
-                const seconds = parseInt(timer % 60, 10);
-                
-                timerDisplay.textContent = `Resend OTP in ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                
-                if (--timer < 0) {
-                    clearInterval(otpTimer);
-                    timerDisplay.textContent = '';
-                    resendButton.style.display = 'block';
-                }
-            }, 1000);
+            timerDisplay.textContent = '';
+            resendButton.style.display = 'block';
         }
+    }, 1000);
+}
 
-        function requestOTP() {
-            const requestOtpBtn = document.getElementById('requestOtpBtn');
-            requestOtpBtn.disabled = true;
-            
-            // Get unique_id from URL
-            const uniqueId = window.location.pathname.split('/').pop();
-            
-            fetch(`/send-otp/${uniqueId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('documents-locked').style.display = 'none';
-                    document.getElementById('otp-verification').style.display = 'block';
-                    document.getElementById('resendOtpBtn').style.display = 'none';
-                    startTimer(180); // 3 minutes timer
-                    showNotification('OTP sent successfully', 'success');
-                } else {
-                    showNotification('Failed to send OTP', 'error');
-                    requestOtpBtn.disabled = false;
-                }
-            })
-            .catch(error => {
-                showNotification('Error sending OTP', 'error');
-                requestOtpBtn.disabled = false;
-            });
+function requestOTP() {
+    const requestOtpBtn = document.getElementById('requestOtpBtn');
+    requestOtpBtn.disabled = true;
+    
+    // Get unique_id from URL
+    const uniqueId = window.location.pathname.split('/').pop();
+    
+    fetch(`/send-otp/${uniqueId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('documents-locked').style.display = 'none';
+            document.getElementById('otp-verification').style.display = 'block';
+            document.getElementById('resendOtpBtn').style.display = 'none';
+            startTimer(180); // 3 minutes timer
+            showNotification('OTP sent successfully', 'success');
+        } else {
+            showNotification('Failed to send OTP', 'error');
+            requestOtpBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        showNotification('Error sending OTP', 'error');
+        requestOtpBtn.disabled = false;
+    });
+}
 
-        function verifyOTP() {
-            const otp = document.getElementById('otpInput').value;
-            const uniqueId = window.location.pathname.split('/').pop();
+function verifyOTP() {
+    const otp = document.getElementById('otpInput').value;
+    const uniqueId = window.location.pathname.split('/').pop();
+    
+    fetch(`/verify-otp/${uniqueId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            otp: otp
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('otp-verification').style.display = 'none';
+            document.getElementById('documents-grid').style.display = 'grid';
+            showNotification('Documents unlocked successfully', 'success');
+            clearInterval(otpTimer);
+        } else {
+            showNotification('Invalid OTP', 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Error verifying OTP', 'error');
+    });
+}
+
+// Updated Location Sharing functionality
+document.getElementById('sendLocationBtn').addEventListener('click', function() {
+    const button = this;
+    button.disabled = true;
+    button.classList.add('loading');
+    button.innerHTML = '<i class="bi bi-hourglass-split"></i><span>Getting Location...</span>';
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
             
-            fetch(`/verify-otp/${uniqueId}`, {
+            button.innerHTML = '<i class="bi bi-arrow-repeat spin"></i><span>Preparing Share...</span>';
+            
+            // Get the contact number from the page
+            const contactNumber = '{{ contact }}';
+            
+            // Construct the WhatsApp URL with location
+            const locationMessage = `Emergency: I'm sharing my current location: https://www.google.com/maps?q=${latitude},${longitude}`;
+            const whatsappURL = `https://wa.me/${contactNumber.replace(/\D/g, '')}?text=${encodeURIComponent(locationMessage)}`;
+            
+            // First send the location data to your server for records
+            fetch('/send_location', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    otp: otp
-                })
+                    latitude: latitude,
+                    longitude: longitude
+                }),
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    document.getElementById('otp-verification').style.display = 'none';
-                    document.getElementById('documents-grid').style.display = 'grid';
-                    showNotification('Documents unlocked successfully', 'success');
-                    clearInterval(otpTimer);
-                } else {
-                    showNotification('Invalid OTP', 'error');
-                }
-            })
-            .catch(error => {
-                showNotification('Error verifying OTP', 'error');
-            });
-        }
-
-        document.getElementById('sendLocationBtn').addEventListener('click', function() {
-            const button = this;
-            button.disabled = true;
-            button.classList.add('loading');
-            button.innerHTML = '<i class="bi bi-hourglass-split"></i><span>Getting Location...</span>';
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    var latitude = position.coords.latitude;
-                    var longitude = position.coords.longitude;
-                    
-                    button.innerHTML = '<i class="bi bi-arrow-repeat spin"></i><span>Sending Location...</span>';
-                    
-                    fetch('/send_location', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            latitude: latitude,
-                            longitude: longitude
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        showNotification('Location shared successfully with emergency services');
-                        
-                        // Reset button
-                        button.disabled = false;
-                        button.classList.remove('loading');
-                        button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        showNotification('Failed to share location', 'error');
-                        
-                        button.disabled = false;
-                        button.classList.remove('loading');
-                        button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
-                    });
-                }, function() {
-                    showNotification('Unable to retrieve your location', 'error');
-                    
-                    button.disabled = false;
-                    button.classList.remove('loading');
-                    button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
-                });
-            } else {
-                showNotification('Geolocation is not supported by your browser', 'error');
+                showNotification('Location ready to share');
+                
+                // Open WhatsApp with the location
+                window.open(whatsappURL, '_blank');
+                
+                // Reset button
                 button.disabled = false;
                 button.classList.remove('loading');
                 button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
-            }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                showNotification('Failed to prepare location share', 'error');
+                
+                // Reset button
+                button.disabled = false;
+                button.classList.remove('loading');
+                button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+            });
+        }, function(error) {
+            console.error('Geolocation error:', error);
+            showNotification('Unable to retrieve your location', 'error');
+            
+            // Reset button
+            button.disabled = false;
+            button.classList.remove('loading');
+            button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
         });
+    } else {
+        showNotification('Geolocation is not supported by your browser', 'error');
+        button.disabled = false;
+        button.classList.remove('loading');
+        button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
+    }
+});
 
-        function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <div class="notification-icon">
-<i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
-                </div>
-                <div class="notification-message">${message}</div>
-            `;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    notification.remove();
-                }, 300);
-            }, 3000);
-        }
+// Notification functionality
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="bi ${type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill'}"></i>
+        </div>
+        <div class="notification-message">${message}</div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
     </script>
 
     <style>

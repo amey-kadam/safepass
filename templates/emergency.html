@@ -103,9 +103,16 @@
                     var latitude = position.coords.latitude;
                     var longitude = position.coords.longitude;
                     
-                    button.innerHTML = '<i class="bi bi-arrow-repeat spin"></i><span>Sending Location...</span>';
+                    button.innerHTML = '<i class="bi bi-arrow-repeat spin"></i><span>Preparing Share...</span>';
                     
-                    // Send location to server
+                    // Get the contact number from the page
+                    const contactNumber = '{{ contact }}';
+                    
+                    // Construct the WhatsApp URL with location
+                    const locationMessage = `Emergency: I'm sharing my current location: https://www.google.com/maps?q=${latitude},${longitude}`;
+                    const whatsappURL = `https://wa.me/${contactNumber.replace(/\D/g, '')}?text=${encodeURIComponent(locationMessage)}`;
+                    
+                    // First send the location data to your server for records
                     fetch('/send_location', {
                         method: 'POST',
                         headers: {
@@ -119,10 +126,10 @@
                     })
                     .then(response => response.json())
                     .then(data => {
-                        showNotification('Location shared successfully with emergency services');
+                        showNotification('Location ready to share');
                         
-                        // Open location in Google Maps
-                        window.open(`https://www.google.com/maps?q=${latitude},${longitude}`, '_blank');
+                        // Open WhatsApp with the location
+                        window.open(whatsappURL, '_blank');
                         
                         // Reset button
                         button.disabled = false;
@@ -131,14 +138,15 @@
                     })
                     .catch((error) => {
                         console.error('Error:', error);
-                        showNotification('Failed to share location', 'error');
+                        showNotification('Failed to prepare location share', 'error');
                         
                         // Reset button
                         button.disabled = false;
                         button.classList.remove('loading');
                         button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
                     });
-                }, function() {
+                }, function(error) {
+                    console.error('Geolocation error:', error);
                     showNotification('Unable to retrieve your location', 'error');
                     
                     // Reset button
@@ -153,7 +161,7 @@
                 button.innerHTML = '<i class="bi bi-geo-alt-fill"></i><span>Share Current Location</span>';
             }
         });
-
+    
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
