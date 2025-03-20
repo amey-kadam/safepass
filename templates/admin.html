@@ -1,374 +1,41 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Guardian - Your Choice</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 
-{% block title %}SafePass Drive{% endblock %}
 
-{% block header_title %}SafePass Drive{% endblock %}
+<body>
 
-{% block header_button %}
-<a href="{{ url_for('admin_logout') }}" class="nav-button">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/>
-        <line x1="21" y1="12" x2="9" y2="12"/>
-    </svg>
-    Logout
-</a>
-{% endblock %}
+        <!-- Navbar - Same as landing page -->
+        <nav class="bg-gray-800 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-20 items-center">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-shield-alt text-blue-500 text-2xl"></i>
+                        <span class="font-bold text-xl text-white">SafePass Drive</span>
+                    </div>
+                    <div class="flex items-center space-x-8">
+                        <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full font-medium transition flex items-center space-x-2">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-{% block extra_css %}
-<style>
-    /* Notification Styles */
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: white;
-        padding: 15px 25px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transform: translateX(120%);
-        transition: transform 0.3s ease;
-        z-index: 1000;
-    }
 
-    .notification.show {
-        transform: translateX(0);
-    }
 
-    .notification.success {
-        border-left: 4px solid #28a745;
-    }
-
-    .notification.error {
-        border-left: 4px solid #dc3545;
-    }
-
-    .notification-icon {
-        font-size: 1.2rem;
-    }
-
-    .notification.success .notification-icon {
-        color: #28a745;
-    }
-
-    .notification.error .notification-icon {
-        color: #dc3545;
-    }
-
-    .notification-message {
-        font-size: 0.9rem;
-        color: #333;
-    }
-
-    /* Rest of your existing admin styles */
-    body {
-        font-family: 'Roboto', 'Segoe UI', sans-serif;
-        background-color: #f5f7fa;
-        margin: 0;
-        color: #333;
-    }
-
-/* Container */
-.container {
-    max-width: 1200px;
-    margin: auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    margin-top: 8.5rem;
-    margin-bottom: 30px;
-}
-
-/* Typography */
-h1 {
-    font-size: 28px;
-    color: #2d3748;
-    margin-bottom: 20px;
-    font-weight: 600;
-}
-
-h2 {
-    font-size: 22px;
-    color: #3d4852;
-    margin-bottom: 16px;
-    font-weight: 500;
-}
-
-/* Alerts */
-.alert {
-    padding: 14px 20px;
-    border-radius: 8px;
-    font-size: 15px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-.alert::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 5px;
-    border-radius: 8px 0 0 8px;
-}
-
-.alert-success {
-    background-color: #edf7ed;
-    color: #1e7e34;
-}
-
-.alert-success::before {
-    background-color: #28a745;
-}
-
-.alert-error {
-    background-color: #fbeaea;
-    color: #c62828;
-}
-
-.alert-error::before {
-    background-color: #dc3545;
-}
-
-/* Card Styling */
-.bg-white {
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s ease;
-}
-
-.bg-white:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-}
-
-/* Table */
-.overflow-x-auto {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.07);
-}
-
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-th {
-    background-color: #4299e1;
-    color: white;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-    padding: 15px 20px;
-    border: none;
-}
-
-td {
-    padding: 16px 20px;
-    border-bottom: 1px solid #edf2f7;
-    font-size: 14px;
-    transition: background 0.2s;
-}
-
-th:first-child {
-    border-top-left-radius: 8px;
-}
-
-th:last-child {
-    border-top-right-radius: 8px;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-tr:nth-child(even) {
-    background-color: #f8fafc;
-}
-
-tr:hover td {
-    background-color: #ebf4ff;
-}
-
-/* Button Styles */
-button, .btn, a[href].bg-green-500, a[href].bg-red-500, a[href].bg-gray-500 {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    text-decoration: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.bg-green-500 {
-    background: linear-gradient(135deg, #34d399, #10b981);
-    color: white;
-}
-
-.bg-green-500:hover {
-    background: linear-gradient(135deg, #10b981, #059669);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(16, 185, 129, 0.25);
-}
-
-.bg-red-500 {
-    background: linear-gradient(135deg, #f87171, #ef4444);
-    color: white;
-}
-
-.bg-red-500:hover {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.25);
-}
-
-.bg-gray-500 {
-    background: linear-gradient(135deg, #9ca3af, #6b7280);
-    color: white;
-}
-
-.bg-gray-500:hover {
-    background: linear-gradient(135deg, #6b7280, #4b5563);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(107, 114, 128, 0.25);
-}
-
-/* Links */
-a.text-blue-600 {
-    color: #3b82f6;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-}
-
-a.text-blue-600:hover {
-    color: #2563eb;
-    text-decoration: underline;
-}
-
-a.text-blue-600::after {
-    content: "↗";
-    font-size: 14px;
-    margin-left: 4px;
-    opacity: 0.8;
-}
-
-/* Modal */
-#denyModal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-    animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-#denyModal .relative {
-    width: 450px;
-    margin: 10% auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    transform: translateY(0);
-    animation: slideIn 0.3s;
-}
-
-@keyframes slideIn {
-    from { transform: translateY(-30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-#denyModal h3 {
-    margin-top: 0;
-    color: #2d3748;
-}
-
-#denyModal textarea {
-    width: 100%;
-    height: 100px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 12px;
-    font-family: inherit;
-    resize: vertical;
-    margin-bottom: 20px;
-    transition: border-color 0.2s;
-    outline: none;
-}
-
-#denyModal textarea:focus {
-    border-color: #4299e1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
-}
-
-#denyModal .flex {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-/* Empty state styling */
-p.text-gray-600 {
-    padding: 30px;
-    text-align: center;
-    background-color: #f8fafc;
-    border-radius: 8px;
-    color: #64748b;
-    font-size: 16px;
-}
-
-/* Utility Classes */
-.hidden {
-    display: none !important;
-}
-
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mb-6 {
-    margin-bottom: 24px;
-}
-
-.mr-2 {
-    margin-right: 8px;
-}
-</style>
-{% endblock %}
-
-{% block content %}
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
     
-  
     <div class="bg-white shadow rounded-lg p-6">
         
         {% if pending_contacts %}
@@ -378,7 +45,7 @@ p.text-gray-600 {
                         <tr>
                             <th class="px-4 py-2">Name</th>
                             <th class="px-4 py-2">Contact</th>
-                            <th class="px-4 py-2">Document</th>
+                            <th class="px-4 py-2">Documents</th>
                             <th class="px-4 py-2">Created At</th>
                             <th class="px-4 py-2">Actions</th>
                         </tr>
@@ -389,10 +56,33 @@ p.text-gray-600 {
                                 <td class="border px-4 py-2">{{ contact.name }}</td>
                                 <td class="border px-4 py-2">{{ contact.contact }}</td>
                                 <td class="border px-4 py-2">
+                                    <!-- Primary document link -->
                                     <a href="{{ url_for('download_file', filename=contact.document_path) }}" 
-                                       class="text-blue-600 hover:text-blue-800">
-                                        View Document
+                                       class="text-blue-600 hover:text-blue-800 mb-1 block">
+                                        Primary Document
                                     </a>
+                                    
+                                    <!-- Check if additional documents exist and display them -->
+                                    {% if contact.additional_data %}
+                                        <button onclick="toggleDocuments('{{ contact.id }}')"
+                                                class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm hover:bg-blue-200">
+                                            View All Documents
+                                        </button>
+                                        
+                                        <div id="documents-{{ contact.id }}" class="hidden mt-2 bg-gray-50 p-2 rounded">
+                                            {% set documents = contact.additional_data|get_documents_from_json %}
+                                                                                        {% if documents %}
+                                                {% for doc_name, filename in documents.items() %}
+                                                    <a href="{{ url_for('download_file', filename=filename) }}" 
+                                                       class="text-blue-600 hover:text-blue-800 block text-sm py-1">
+                                                        {{ doc_name.replace('_', ' ').title() }}
+                                                    </a>
+                                                {% endfor %}
+                                            {% else %}
+                                                <p class="text-sm text-gray-500">No additional documents found</p>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
                                 </td>
                                 <td class="border px-4 py-2">{{ contact.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                                 <td class="border px-4 py-2">
@@ -487,13 +177,30 @@ p.text-gray-600 {
     function showDenyForm(contactId) {
         const modal = document.getElementById('denyModal');
         const form = document.getElementById('denyForm');
-        modal.classList.remove('hidden');
+        
+        console.log("Contact ID:", contactId);
+        
         form.action = `/admin/deny/${contactId}`;
+        
+        form.method = "POST";
+        
+        modal.classList.remove('hidden');
     }
     
     function hideDenyForm() {
         const modal = document.getElementById('denyModal');
         modal.classList.add('hidden');
     }
-    </script>
-{% endblock %}
+    
+    function toggleDocuments(contactId) {
+        const documentsDiv = document.getElementById(`documents-${contactId}`);
+        if (documentsDiv.classList.contains('hidden')) {
+            documentsDiv.classList.remove('hidden');
+        } else {
+            documentsDiv.classList.add('hidden');
+        }
+    }
+</script>
+
+</body>
+</html>
