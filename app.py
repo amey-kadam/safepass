@@ -21,7 +21,7 @@ from sqlalchemy import inspect
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///local.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -502,15 +502,19 @@ def options_page(user_id):
 def generate_qr():
     if request.method == 'POST':
         try:
-            # Personal Details
+
             name = request.form.get('full_name')
             dob = request.form.get('date_of_birth')
             gender = request.form.get('gender')
             blood_group = request.form.get('blood_group')
             email = request.form.get('email')
-            mobile = request.form.get('mobile')
+            
+            country_code = request.form.get('country_code')
+            mobile_number = request.form.get('mobile')
+            mobile = f"{country_code}{mobile_number}"
+            
             aadhaar_number = request.form.get('aadhaar_number')
-            pan_number = request.form.get('pan_number', '')  # Optional
+            pan_number = request.form.get('pan_number', '')  
             permanent_address = request.form.get('permanent_address')
             current_address = request.form.get('current_address')
             
@@ -574,7 +578,9 @@ def generate_qr():
                     "gender": gender,
                     "blood_group": blood_group,
                     "email": email,
-                    "mobile": mobile,
+                    "country_code": country_code,  
+                    "mobile_number": mobile_number,  
+                    "mobile": mobile,  
                     "aadhaar_number": aadhaar_number,
                     "pan_number": pan_number,
                     "permanent_address": permanent_address,
@@ -626,7 +632,7 @@ def generate_qr():
             return redirect(url_for('my_qrcodes'))
             
         except Exception as e:
-            print(f"Error in generate_qr: {str(e)}")  # Debug print
+            print(f"Error in generate_qr: {str(e)}")
             db.session.rollback()
             flash(f'Error generating QR code: {str(e)}', 'error')
             return redirect(url_for('dashboard'))
@@ -704,8 +710,8 @@ def internal_error(error):
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'kamey2312@gmail.com'  # Replace with your email
-app.config['MAIL_PASSWORD'] = 'pmkd stcj wowf vbcc'     # Replace with your app password
+app.config['MAIL_USERNAME'] = 'kamey2312@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'pmkd stcj wowf vbcc'     
 mail = Mail(app)
 
 # Store OTPs temporarily (in production, use Redis or similar)
@@ -775,3 +781,7 @@ def verify_otp(unique_id):
 with app.app_context():
     if not inspect(db.engine).get_table_names(): 
         db.create_all()
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
