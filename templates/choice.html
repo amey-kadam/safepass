@@ -12,7 +12,7 @@
             font-family: 'Poppins', sans-serif;
         }
         .gradient-bg {
-            background: linear-gradient(135deg, #3B4FD8 0%, #00C6FF 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #00C6FF 100%);
         }
         .secondary-gradient {
             background: linear-gradient(135deg, #00C6FF 0%, #0072FF 100%);
@@ -57,20 +57,10 @@
             overflow: hidden;
             border: 2px solid transparent;
         }
-        .choice-card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 30px;
-            height: 30px;
-            background-color: rgba(255, 255, 255, 0.2);
-            clip-path: polygon(100% 0, 100% 100%, 0 100%);
-        }
         .choice-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border-color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(59, 130, 246, 0.5);
         }
         .glow-button {
             animation: glow 2s ease-in-out infinite alternate;
@@ -105,46 +95,50 @@
     </nav>
     
     <!-- Main Content -->
-    <div class="min-h-screen gradient-bg py-14 px-4 ">
-        <div class="max-w-2xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl border border-white/20">
-            <div class="p-8 text-center">
-                <h1 class="text-3xl font-bold text-white mb-8">Choose an Option</h1>
+    <div class="min-h-screen gradient-bg py-14 px-4">
+        <div class="max-w-6xl mx-auto text-center mb-10">
+            <h1 class="text-3xl font-bold text-white mb-8">Choose an Option</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Generate QR Card -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-xl">
+                    <div>
+                        <img src="static/images/generate-qr.jpg" alt="Generate QR" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-6 text-center">
+                        <div class="flex items-center justify-center mb-4">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-qrcode text-3xl text-blue-600"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Generate QR Codes</h3>
+                        <p class="text-gray-600 mb-6">Create new QR codes for your emergency contacts</p>
+                        <a href="{{ url_for('dashboard', unique_id=unique_id) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                            Click to Generate
+                        </a>
+                    </div>
+                </div>
                 
-                <div class="grid grid-cols-1 gap-6">
-                    <a href="{{ url_for('dashboard', unique_id=unique_id) }}" class="choice-card block p-6 rounded-xl green-gradient text-white transition shadow-lg">
+                <!-- View QR Card -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-xl">
+                    <div>
+                        <img src="static/images/view-qr.jpg" alt="View QR" class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-6 text-center">
                         <div class="flex items-center justify-center mb-4">
-                            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                                <i class="fas fa-qrcode text-3xl"></i>
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-eye text-3xl text-blue-600"></i>
                             </div>
                         </div>
-                        <h3 class="text-xl font-semibold mb-2">Generate QR Codes</h3>
-                        <p class="text-white/80">Create new QR codes for your emergency contacts</p>
-                        <div class="mt-4 flex justify-center">
-                            <span class="inline-block bg-white text-green-800 px-4 py-2 rounded-lg font-semibold">
-                                Click to Generate
-                            </span>
-                        </div>
-                    </a>
-                    
-                    <a href="{{ url_for('my_qrcodes', unique_id=unique_id) }}" class="choice-card block p-6 rounded-xl red-gradient text-white transition shadow-lg">
-                        <div class="flex items-center justify-center mb-4">
-                            <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                                <i class="fas fa-eye text-3xl"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">View My QR Codes</h3>
-                        <p class="text-white/80">See and manage your existing QR codes</p>
-                        <div class="mt-4 flex justify-center">
-                            <span class="inline-block bg-white text-red-800 px-4 py-2 rounded-lg font-semibold">
-                                View Collection
-                            </span>
-                        </div>
-                    </a>
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">View My QR Codes</h3>
+                        <p class="text-gray-600 mb-6">See and manage your existing QR codes</p>
+                        <a href="{{ url_for('my_qrcodes', unique_id=unique_id) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                            View Collection
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-
 </body>
 </html>
